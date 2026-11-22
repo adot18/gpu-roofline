@@ -1,0 +1,14 @@
+gpu_roofline
+exercises/01_hbm_coalescing
+exercises/02_cache_and_shared_mem
+exercises/03_valu_vs_matrix_cores
+exercises/04_launch_floor_and_graphs
+exercises/05_pcie_and_p2p_links
+*.o
+*.out
+*.pftrace
+*.csv
+*.ncu-rep
+workloads/
+trace_out/
+.DS_Store
