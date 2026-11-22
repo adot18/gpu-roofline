@@ -162,6 +162,37 @@ class TestEngineRoofline(unittest.TestCase):
                 self.assertTrue(text.startswith("<svg "))
                 self.assertIn("</svg>", text)
 
+    def test_demangle_and_model_bound_trace(self):
+        self.assertEqual(
+            er.shorten_kernel_name("_ZN5aiter26cross_device_reduce_1stageINS_8RankDataEEE"),
+            "aiter::cross_device_reduce_1stage",
+        )
+        self.assertEqual(
+            er.shorten_kernel_name("mfma_moe1_silu_mul_afp8_wfp4_fp8_t32x128x256_pm1"),
+            "mfma_moe1_silu_mul_afp8_wfp4_fp8_t32x128x2",
+        )
+        cat, pipe, dt = er.classify_kernel("gemm2_a4w4_port_b64_n128_k256_w1x4")
+        self.assertEqual((cat, pipe, dt), ("MoE", "HBM_READ", "fp4"))
+        cat2, pipe2, dt2 = er.classify_kernel("_ZN5aiter26cross_device_reduce_1stageE")
+        self.assertEqual((cat2, pipe2), ("Comm", "P2P"))
+
+        hint, _ = er.build_model_hint(er.MODEL_PRESETS["deepseek-v4-fp4"], tp=2, batch_decode=24, spec_tokens=0, ctx_len=32768)
+        trace = {
+            "traceEvents": [
+                {"ph": "X", "cat": "kernel", "name": "mfma_moe1_silu_mul_afp8_wfp4_fp8_t32x128x256",
+                 "pid": 0, "tid": 7, "ts": 100.0, "dur": 220.0, "args": {"correlation": 10}},
+                {"ph": "X", "cat": "kernel", "name": "gemm2_a4w4_port_b64_n128_k256",
+                 "pid": 0, "tid": 7, "ts": 325.0, "dur": 110.0, "args": {"correlation": 11}},
+            ]
+        }
+        with tempfile.TemporaryDirectory() as td:
+            tp = Path(td) / "graph.trace.json"
+            tp.write_text(json.dumps(trace))
+            ops, _ = er.parse_kineto_trace(tp, er.HW_PRESETS["mi355x"], model_hint=hint)
+        self.assertEqual(len(ops), 2)
+        self.assertTrue(all(o.shape_source == "model_bound" for o in ops))
+        self.assertAlmostEqual(ops[0].bytes_moved / ops[1].bytes_moved, 2.0, delta=0.05)
+
     def test_cli_demo_and_plot_sweep(self):
         with tempfile.TemporaryDirectory() as td:
             svg1 = Path(td) / "atlas.svg"

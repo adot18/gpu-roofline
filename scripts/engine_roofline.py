@@ -342,15 +342,37 @@ DTYPE_BYTES = {
 }
 
 
+def shorten_kernel_name(raw_name: str) -> str:
+    """Cleanly demangle C++/HIP/CUDA kernel symbols and preserve the descriptive prefix."""
+    s = raw_name.strip()
+    m1 = re.match(r"^_ZN(\d+)", s)
+    if m1:
+        n1 = int(m1.group(1))
+        p1 = m1.end()
+        ns = s[p1 : p1 + n1]
+        m2 = re.match(r"^(\d+)", s[p1 + n1 :])
+        if m2 and len(ns) == n1:
+            n2 = int(m2.group(1))
+            p2 = p1 + n1 + m2.end()
+            fn = s[p2 : p2 + n2]
+            if len(fn) == n2:
+                s = f"{ns}::{fn}"
+    for pfx in ("void ", "int ", "float ", "__global__ "):
+        if s.startswith(pfx):
+            s = s[len(pfx):]
+    s = s.split("(")[0].split("<")[0].lstrip("_")
+    return s[:42]
+
+
 def classify_kernel(name: str, dtypes: Optional[list] = None) -> Tuple[str, str, str]:
     """Return (category, default_pipe, precision_dtype) from kernel name & tensor dtypes."""
     low = name.lower()
     dt_str = " ".join(str(x).lower() for x in (dtypes or []))
 
     # Precision inference
-    if any(k in low for k in ("fp4", "mxfp4", "nvfp4", "f4_", "_f4", "f8f6f4", "e2m1")) or "float4" in dt_str:
+    if any(k in low for k in ("fp4", "wfp4", "a4w4", "w4a8", "w4a4", "mxfp4", "nvfp4", "f4_", "_f4", "f8f6f4", "e2m1")) or "float4" in dt_str:
         dtype = "fp4"
-    elif any(k in low for k in ("fp8", "mxfp8", "f8b", "f8_", "_f8", "e4m3", "scaled_mm", "fp8_gemm", "w8a8")) or "float8" in dt_str:
+    elif any(k in low for k in ("fp8", "afp8", "a8w8", "w8a8", "mxfp8", "mxscale", "f8b", "f8_", "_f8", "e4m3", "scaled_mm", "fp8_gemm")) or "float8" in dt_str:
         dtype = "fp8"
     elif any(k in low for k in ("softmax", "rmsnorm", "rms_norm", "layernorm", "silu", "swiglu", "act_and_mul", "rotary", "rope", "topk", "sinkhorn", "exp")):
         dtype = "sfu"
@@ -359,21 +381,29 @@ def classify_kernel(name: str, dtypes: Optional[list] = None) -> Tuple[str, str,
     else:
         dtype = "bf16"
 
-    if any(k in low for k in ("nccl", "rccl", "allreduce", "all_reduce", "all_to_all", "all2all", "msccl", "deepep", "custom_ar", "quick_reduce")):
+    if any(k in low for k in ("nccl", "rccl", "allreduce", "all_reduce", "cross_device_reduce", "allgather", "reducescatter", "all_to_all", "all2all", "msccl", "deepep", "custom_ar", "quick_reduce")):
         return "Comm", "P2P", dtype
-    if any(k in low for k in ("moe", "expert", "topk", "grouped_gemm", "fmoe")):
+    if any(k in low for k in ("moe", "gemm2_a4w4", "expert", "topk", "grouped_gemm", "fmoe")):
         return "MoE", "HBM_READ", dtype
     if any(k in low for k in ("flash", "fmha", "attn", "attention", "mla", "paged", "indexer")):
         return "Attention", "HBM_READ", dtype
-    if any(k in low for k in ("gemm", "cijk_", "nvjet", "cutlass", "cublas", "hipblas", "scaled_mm", "wvsplitk", "matmul", "gemv", "woa", "wqkv")):
+    if any(k in low for k in ("gemm", "bmm_", "hgemm", "flydsl", "cijk_", "nvjet", "cutlass", "cublas", "hipblas", "scaled_mm", "wvsplitk", "matmul", "gemv", "woa", "wqkv")):
         return "GEMM", "HBM_READ", dtype
-    if any(k in low for k in ("norm", "rope", "rotary", "silu", "swiglu", "act_and_mul", "elementwise", "quant", "cast", "kv_cache", "reshape_and_cache", "sinkhorn", "mhc", "engram")):
+    if any(k in low for k in ("norm", "rope", "rotary", "silu", "swiglu", "act_and_mul", "elementwise", "quant", "cast", "kv_cache", "reshape_and_cache", "sinkhorn", "mhc", "hc_boundary", "engram")):
         return "Norm/Elem", "HBM", dtype
     return "Norm/Elem", "HBM", dtype
 
 
 def estimate_from_dims(
-    cat: str, dtype: str, dims: list, dtypes: list, explicit_flops: float, kernel_name: str, dur_us: float, gk_args: dict
+    cat: str,
+    dtype: str,
+    dims: list,
+    dtypes: list,
+    explicit_flops: float,
+    kernel_name: str,
+    dur_us: float,
+    gk_args: dict,
+    model_hint: Optional[dict] = None,
 ) -> Tuple[float, float, float, str]:
     """Infer (flops, bytes_moved, tokens_m, shape_source) from Kineto CPU op Input Dims, or fallback."""
     valid_dims = [d for d in dims if isinstance(d, list) and len(d) >= 1 and all(isinstance(x, int) and x > 0 for x in d)]
@@ -436,8 +466,43 @@ def estimate_from_dims(
         flops = (bytes_est / max(b_elem, 1.0)) * 2.5
         return flops, bytes_est, tokens_m, "exact"
 
-    # Fallback when CUDA/HIP Graph replay omits cpu_op Input Dims:
-    # Try parsing M/N/K hints from kernel name or grid/block dims so points remain meaningful!
+    # When CUDA/HIP Graph replay omits cpu_op Input Dims, bind to exact model shapes if `--model` was given!
+    if model_hint is not None:
+        low = kernel_name.lower()
+        m_v = model_hint["m_verify"]
+        d = model_hint["d"]
+        tp = model_hint["tp"]
+        if cat == "MoE":
+            if ("topk" in low or "sorting" in low) and "moe1" not in low and "gemm" not in low:
+                b = m_v * model_hint["n_routed"] * 2.0
+                return b * 2.0, max(b, 65536.0), m_v, "model_bound"
+            # Stage-1 (gate+up = 2 * moe_inter) vs Stage-2 (down = 1 * moe_inter) vs fused (3 * moe_inter)
+            mult = 2.0 if "moe1" in low else (1.0 if "gemm2" in low or "moe2" in low else 3.0)
+            n_r = model_hint["n_routed"]
+            tk = model_hint["topk"]
+            active_e = n_r * (1.0 - ((n_r - tk) / n_r) ** m_v) if n_r > tk > 0 else float(n_r)
+            m_per_e = max(1.0, (m_v * tk) / max(n_r, 1))
+            b_w = 0.53125 if dtype == "fp4" else (1.0 if dtype == "fp8" else 2.0)
+            w_bytes = active_e * mult * d * (model_hint["moe_inter"] / tp) * b_w
+            flops = 2.0 * m_v * tk * mult * d * (model_hint["moe_inter"] / tp)
+            return flops, w_bytes + m_v * d * 4.0, m_per_e, "model_bound"
+        if cat == "Attention":
+            return model_hint["attn_flops"], model_hint["attn_bytes"], model_hint["bs"], "model_bound"
+        if cat == "GEMM":
+            # Distinguish per-sub-projection (wqkv_a / wq_b / wo_a / wo_b ~ 20 MB) vs full fused QKV+O
+            b_w = 0.56 if dtype == "fp4" else (1.0 if dtype == "fp8" else 2.0)
+            k_m = re.search(r"_k(\d+)", low)
+            n_est = float(k_m.group(1)) if k_m else (model_hint["qkv_n"] * 0.28)
+            bytes_est = d * n_est * b_w + m_v * (d + n_est) * 2.0
+            flops = 2.0 * m_v * d * n_est
+            return flops, bytes_est, m_v, "model_bound"
+        if cat == "Comm":
+            bytes_est = m_v * d * 2.0
+            return bytes_est * 0.25, bytes_est, m_v, "model_bound"
+        bytes_est = m_v * d * 2.0 * 3.0
+        return m_v * d * 5.0, bytes_est, m_v, "model_bound"
+
+    # Fallback when CUDA/HIP Graph replay omits cpu_op Input Dims and no --model was given:
     m_match = re.search(r"_[Mm](\d+)[_x]", kernel_name)
     grid = gk_args.get("grid")
     grid_blocks = float(math.prod(grid)) if isinstance(grid, list) and grid else 256.0
@@ -475,7 +540,11 @@ def _fusion_rule(k1: str, c1: str, k2: str, c2: str) -> Optional[Tuple[str, str]
     return None
 
 
-def parse_kineto_trace(trace_path: Path, hw: Optional[HardwareProfile] = None) -> Tuple[List[OpPoint], List[FusionOpportunity]]:
+def parse_kineto_trace(
+    trace_path: Path,
+    hw: Optional[HardwareProfile] = None,
+    model_hint: Optional[dict] = None,
+) -> Tuple[List[OpPoint], List[FusionOpportunity]]:
     """Parse a PyTorch Kineto .json or .json.gz trace: correlate shapes, stream gaps, and fusion targets."""
     opener = gzip.open if trace_path.suffix == ".gz" else open
     with opener(trace_path, "rt", encoding="utf-8", errors="replace") as f:
@@ -540,7 +609,7 @@ def parse_kineto_trace(trace_path: Path, hw: Optional[HardwareProfile] = None) -
             ts = float(gk.get("ts", 0.0))
             dur = float(gk.get("dur", 0.0))
             raw_name = gk.get("name", "unknown_kernel")
-            short = raw_name.split("(")[0].split("<")[0][-44:]
+            short = shorten_kernel_name(raw_name)
             gk_args = gk.get("args") or {}
             corr = gk_args.get("correlation")
             cpu_op = corr_to_cpu.get(corr)
@@ -550,7 +619,7 @@ def parse_kineto_trace(trace_path: Path, hw: Optional[HardwareProfile] = None) -
             cat, pipe, dtype = classify_kernel(raw_name, in_types)
             flops, bytes_m, tok_m, src = estimate_from_dims(
                 cat, dtype, in_dims, in_types, float(c_args.get("Flops", 0.0) or 0.0),
-                raw_name, dur, gk_args,
+                raw_name, dur, gk_args, model_hint=model_hint,
             )
 
             # Small activation/norm ops stay in L2 rather than streaming from HBM
@@ -567,7 +636,7 @@ def parse_kineto_trace(trace_path: Path, hw: Optional[HardwareProfile] = None) -
                         if rule is not None:
                             pat, rec = rule
                             fa = fusion_agg.setdefault(pat, {
-                                "pair": f"{prev_rec['short'][-22:]} -> {short[-22:]}",
+                                "pair": f"{prev_rec['short'][:20]} -> {short[:20]}",
                                 "rec": rec, "count": 0, "dur": 0.0, "gap": 0.0, "bytes": 0.0,
                             })
                             fa["count"] += 1
@@ -750,7 +819,68 @@ def detect_model_precisions(
 
 
 def _bytes_per_param(dtype: str) -> float:
-    return {"bf16": 2.0, "fp8": 1.0, "fp4": 0.56}.get(dtype, 2.0)
+    return {"bf16": 2.0, "fp8": 1.0, "fp4": 0.53125}.get(dtype, 2.0)
+
+
+def _expected_active_experts(n_routed: int, topk: int, m_tokens: float) -> float:
+    if n_routed <= 0:
+        return 0.0
+    if topk >= n_routed:
+        return float(n_routed)
+    return float(n_routed) * (1.0 - ((n_routed - topk) / n_routed) ** max(1.0, m_tokens))
+
+
+def build_model_hint(
+    cfg: dict,
+    tp: int,
+    batch_decode: int,
+    spec_tokens: int,
+    ctx_len: int,
+    quant: str = "auto",
+    attn_quant: str = "auto",
+    moe_quant: str = "auto",
+    kv_quant: str = "auto",
+) -> Tuple[dict, Dict[str, str]]:
+    """Build per-layer shape hints so HIP/CUDA-Graph traces (record_shapes=False) bind to exact model geometry."""
+    precs = detect_model_precisions(cfg, quant, attn_quant, moe_quant, kv_quant)
+    tcfg = cfg.get("text_config") if isinstance(cfg.get("text_config"), dict) else cfg
+    d = int(tcfg.get("hidden_size", 5120))
+    hq = int(tcfg.get("num_attention_heads", 40))
+    hkv = int(tcfg.get("num_key_value_heads", max(1, hq // 8)))
+    head_dim = int(tcfg.get("head_dim", d // hq))
+    inter = int(tcfg.get("intermediate_size", d * 3))
+    n_routed = int(tcfg.get("n_routed_experts") or tcfg.get("num_local_experts") or tcfg.get("num_experts") or 0)
+    topk = int(tcfg.get("num_experts_per_tok", 8 if n_routed else 1))
+    moe_inter = int(tcfg.get("moe_intermediate_size", inter // 4 if n_routed else inter))
+    kv_lora = int(tcfg.get("kv_lora_rank") or (head_dim if (hkv == 1 and tcfg.get("q_lora_rank")) else 0))
+    q_lora = int(tcfg.get("q_lora_rank") or 0)
+    o_lora = int(tcfg.get("o_lora_rank") or 0)
+    rope_dim = int(tcfg.get("qk_rope_head_dim") or 0)
+    nope_dim = int(tcfg.get("qk_nope_head_dim") or head_dim)
+    v_dim = int(tcfg.get("v_head_dim") or head_dim)
+    idx_topk = int(tcfg.get("index_topk") or 0)
+    is_mla = kv_lora > 0
+    if is_mla:
+        q_params = (d * q_lora + q_lora * (hq // tp) * (nope_dim + rope_dim)) if q_lora > 0 else (d * (hq // tp) * (nope_dim + rope_dim))
+        kv_params = d * (kv_lora + rope_dim)
+        o_params = ((hq // tp) * v_dim * o_lora + o_lora * d) if o_lora > 0 else ((hq // tp) * v_dim * d)
+        qkv_n = int(round((q_params + kv_params + o_params) / d))
+    else:
+        qkv_n = (hq + 2 * hkv) * head_dim // tp
+    m_verify = float(batch_decode * max(1, 1 + spec_tokens))
+    eff_ctx = min(ctx_len, idx_topk) if idx_topk > 0 else ctx_len
+    b_kv = _bytes_per_param(precs["kv"])
+    if is_mla:
+        attn_bytes = batch_decode * eff_ctx * (kv_lora + rope_dim) * b_kv
+        attn_flops = 2.0 * m_verify * eff_ctx * (hq / tp) * (kv_lora + rope_dim) * 2.0
+    else:
+        attn_bytes = batch_decode * eff_ctx * 2.0 * (hkv / tp) * head_dim * b_kv
+        attn_flops = 4.0 * m_verify * eff_ctx * (hq / tp) * head_dim
+    return {
+        "d": d, "tp": tp, "bs": float(batch_decode), "m_verify": m_verify,
+        "n_routed": n_routed, "topk": topk, "moe_inter": moe_inter,
+        "qkv_n": qkv_n, "attn_bytes": attn_bytes, "attn_flops": attn_flops,
+    }, precs
 
 
 def model_ops_on_hw(
@@ -835,7 +965,7 @@ def model_ops_on_hw(
 
     # 2. Decode FFN / MoE (Routed Experts + Optional Shared Expert)
     if n_routed > 0:
-        active_e = min(n_routed, batch_decode * topk)
+        active_e = _expected_active_experts(n_routed, topk, batch_decode)
         m_per_e = max(1.0, (batch_decode * topk) / n_routed)
         w_per_e = 3.0 * d * (moe_inter / tp) * b_moe
         f_moe = 2.0 * batch_decode * topk * 3.0 * d * (moe_inter / tp)
@@ -864,7 +994,7 @@ def model_ops_on_hw(
     pts.append(OpPoint(f"SpecDec Verify ({precs['attn'].upper()},M={m_spec})", "GEMM", layers, u * layers, u,
                        f_spec, b_spec, m_spec, pipe="HBM_READ", dtype=precs["attn"], shape_source="model"))
     if n_routed > 0 and spec_tokens > 0:
-        active_sp_e = min(n_routed, m_spec * topk)
+        active_sp_e = _expected_active_experts(n_routed, topk, m_spec)
         m_sp_e = max(1.0, (m_spec * topk) / n_routed)
         w_per_e = 3.0 * d * (moe_inter / tp) * b_moe
         f_sp_moe = 2.0 * m_spec * topk * 3.0 * d * (moe_inter / tp)
@@ -874,7 +1004,7 @@ def model_ops_on_hw(
                            f_sp_moe, b_sp_moe, m_sp_e, pipe="HBM_READ", dtype=precs["moe"], shape_source="model"))
 
     # 4. Decode Paged KV Attention (MLA latent cache vs standard GQA cache, sparse topk if indexed)
-    eff_ctx = min(ctx_len, idx_topk * 8) if idx_topk > 0 else ctx_len
+    eff_ctx = min(ctx_len, idx_topk) if idx_topk > 0 else ctx_len
     ctx_tag = f"{eff_ctx//1024}k" if eff_ctx >= 1024 else str(eff_ctx)
     if is_mla:
         kv_bytes = batch_decode * eff_ctx * (kv_lora + rope_dim) * b_kv
@@ -905,7 +1035,7 @@ def model_ops_on_hw(
 
     if n_routed > 0:
         m_pre_e = max(1.0, (eff_prompt * topk) / n_routed)
-        active_pre_e = min(n_routed, eff_prompt * topk)
+        active_pre_e = _expected_active_experts(n_routed, topk, eff_prompt)
         f_pre_moe = 2.0 * eff_prompt * topk * 3.0 * d * (moe_inter / tp)
         b_pre_moe = active_pre_e * 3.0 * d * (moe_inter / tp) * b_moe + eff_prompt * d * 4.0
         u_pm = sim_time_us(f_pre_moe, b_pre_moe, "MoE", m_pre_e, precs["moe"], "HBM_READ")
@@ -1431,15 +1561,23 @@ def main():
                 except Exception:
                     time.sleep(2.0)
 
+        model_hint = None
+        if args.model and (args.engine or args.trace):
+            cfg = load_hf_config(args.model)
+            model_hint, precs = build_model_hint(
+                cfg, args.tp, args.batch_size, args.spec_tokens, args.ctx_len,
+                args.quant, args.attn_quant, args.moe_quant, args.kv_quant,
+            )
+
         if args.engine:
             trace_file = profile_live_engine(
                 args.engine, args.url, args.trace_dir, args.batch_size, args.prompt_len, args.output_len
             )
-            ops, fusions = parse_kineto_trace(trace_file, hw)
+            ops, fusions = parse_kineto_trace(trace_file, hw, model_hint=model_hint)
             subtitle = f"Live {args.engine.upper()} Kineto Profile ({trace_file.name}: bs={args.batch_size}, prompt={args.prompt_len})"
         elif args.trace:
-            ops, fusions = parse_kineto_trace(args.trace, hw)
-            subtitle = f"PyTorch Kineto Trace ({args.trace.name})"
+            ops, fusions = parse_kineto_trace(args.trace, hw, model_hint=model_hint)
+            subtitle = f"PyTorch Kineto Trace ({args.trace.name})" + (f" + Model Geometry (TP={args.tp}, BS={args.batch_size})" if model_hint else "")
         elif args.model:
             cfg = load_hf_config(args.model)
             ops, precs = model_ops_on_hw(
