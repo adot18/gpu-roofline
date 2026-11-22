@@ -8,6 +8,9 @@ exercises/05_pcie_and_p2p_links
 *.out
 *.pftrace
 *.csv
+*.trace.json
+*.trace.json.gz
+hw_*.json
 *.ncu-rep
 workloads/
 trace_out/

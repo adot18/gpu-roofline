@@ -5,9 +5,9 @@
 // (hipcc: gfx90a MI250X, gfx942 MI300X/MI325X, gfx950 MI350X/MI355X).
 //
 // Usage:
-//   ./gpu_roofline                     # Run probe + print ASCII sweep graph
-//   ./gpu_roofline --csv mi355x.csv    # Also save 4 KiB..2 GiB sweep to CSV
-//                                      # (plot multiple GPUs with scripts/plot_sweep.py)
+//   ./gpu_roofline                           # Run probe + print ASCII sweep graph
+//   ./gpu_roofline --json hw.json            # Export empirical ceilings for engine_roofline.py
+//   ./gpu_roofline --csv sweep.csv           # Export 4 KiB..2 GiB sweep for plot_sweep.py
 // ============================================================================
 
 #include "gpu_compat.h"
@@ -153,10 +153,13 @@ static void format_bytes(size_t bytes, char* buf, size_t cap) {
 }
 
 int main(int argc, char** argv) {
-    const char* csv_path = nullptr;
+    const char* csv_path  = nullptr;
+    const char* json_path = nullptr;
     for (int i = 1; i < argc; ++i) {
         if (std::strcmp(argv[i], "--csv") == 0 && i + 1 < argc) {
             csv_path = argv[++i];
+        } else if (std::strcmp(argv[i], "--json") == 0 && i + 1 < argc) {
+            json_path = argv[++i];
         }
     }
 
@@ -375,6 +378,40 @@ int main(int argc, char** argv) {
             }
             std::fclose(f);
             printf("\nSaved CSV sweep to: %s\n", csv_path);
+        }
+    }
+
+    if (json_path != nullptr) {
+        FILE* jf = std::fopen(json_path, "w");
+        if (jf) {
+            std::fprintf(jf,
+                "{\n"
+                "  \"device\": \"%s\",\n"
+                "  \"backend\": \"%s\",\n"
+                "  \"visible_gpus\": %d,\n"
+                "  \"sms_or_cus\": %d,\n"
+                "  \"vram_gib\": %.2f,\n"
+                "  \"l2_mib\": %.2f,\n"
+                "  \"wave_size\": %d,\n"
+                "  \"hbm_tbs\": %.4f,\n"
+                "  \"hbm_uncoalesced_tbs\": %.4f,\n"
+                "  \"l2_tbs\": %.4f,\n"
+                "  \"shared_lds_tbs\": %.4f,\n"
+                "  \"fp32_valu_tflops\": %.2f,\n"
+                "  \"bf16_matrix_tflops\": %.2f,\n"
+                "  \"cpu_enqueue_us\": %.3f,\n"
+                "  \"eager_launch_us\": %.3f,\n"
+                "  \"graph_launch_us\": %.3f,\n"
+                "  \"pcie_h2d_gbs\": %.2f,\n"
+                "  \"pcie_d2h_gbs\": %.2f,\n"
+                "  \"p2p_read_gbs\": %.2f\n"
+                "}\n",
+                prop.name, GPU_BACKEND_NAME, dev_count, sms, vram_gib, l2_mib,
+                GPU_WAVE_SIZE, hbm_tbs, bad_tbs, l2_tbs, lds_tbs,
+                valu_tflops, mat_tflops, cpu_enq_us, eager_us, graph_us,
+                h2d_gbs, d2h_gbs, p2p_gbs);
+            std::fclose(jf);
+            printf("Saved empirical hardware JSON to: %s\n", json_path);
         }
     }
 

@@ -72,7 +72,64 @@ Sweeping `B` from `4 KiB` to `2 GiB` (`./gpu_roofline` prints an ASCII chart in 
 | [`exercises/03_valu_vs_matrix_cores.cpp`](exercises/03_valu_vs_matrix_cores.cpp) | ~90 | **Pipeline Latency, ILP, & Matrix/Tensor Cores.** Runs three compute kernels back-to-back: (1) a single dependent FMA chain `c = a*c + b` (stalls `~75%` of cycles waiting on 4-cycle ALU latency), (2) 8 independent FMA chains (`c0..c7` hitting `100%` Vector ALU peak via instruction-level parallelism), and (3) hardware **BF16 Matrix/Tensor Cores** (`wmma` / `mfma`, jumping another **`8–16x`** in TFLOP/s). |
 | [`exercises/04_launch_floor_and_graphs.cpp`](exercises/04_launch_floor_and_graphs.cpp) | ~80 | **Async Streams, Launch Overhead, & CUDA/HIP Graphs.** Separates what the CPU pays (`~1–3 µs` to drop a packet into a ring buffer) from the GPU's eager launch floor (`~2–5 µs`), then captures a 1,000-kernel chain into a **CUDA/HIP Graph** to slash inter-kernel dead air down to `~0.3–0.8 µs`. |
 | [`exercises/05_pcie_and_p2p_links.cpp`](exercises/05_pcie_and_p2p_links.cpp) | ~80 | **Off-Chip Links: Pageable vs Pinned PCIe & Multi-GPU P2P.** Demonstrates why `malloc()` pageable host memory crawls over PCIe (`~10–20 GB/s` due to CPU staging copies), why page-locked `gpuHostMalloc` unlocks the full PCIe DMA engine (`~50–60 GB/s`), and how `gpuDeviceEnablePeerAccess` lets GPU 0 read GPU 1's HBM directly over `NVLink` / `xGMI` (`300–450+ GB/s`). |
-| [`scripts/plot_sweep.py`](scripts/plot_sweep.py) | ~140 | **Zero-dependency SVG plotter.** Takes any number of CSV sweeps (`./gpu_roofline --csv mi300x.csv`, `mi355x.csv`, `h100.csv`) and renders a clean multi-GPU log-scale bandwidth curve highlighting the Latency-Bound, L2 Peak, and HBM Plateau zones. |
+| [`scripts/plot_sweep.py`](scripts/plot_sweep.py) | ~140 | **Zero-dependency SVG bandwidth sweep plotter.** Takes any number of CSV sweeps (`./gpu_roofline --csv mi300x.csv`, `mi355x.csv`, `h100.csv`) and renders a log-scale bandwidth curve highlighting the Latency-Bound, L2 Peak, and HBM Plateau zones. |
+| [`scripts/engine_roofline.py`](scripts/engine_roofline.py) | ~550 | **Multi-dimensional `SGLang` / `vLLM` / Model Roofline Analyzer & Optimization Advisor.** Profiles a live `SGLang` or `vLLM` server (via Kineto `/start_profile`), parses saved `.trace.json[.gz]` traces, or projects any HuggingFace `config.json` onto `--hw hw.json` across **4 orthogonal bottleneck planes** + prints ranked optimization prescriptions. |
+
+---
+
+## Plotting Live `SGLang` / `vLLM` Kernels & Models Across All 4 Bottleneck Planes
+
+A classical 2D Roofline plot (`FLOPs/s` vs. `FLOPs/Byte`) only captures **Compute vs. HBM**—hiding kernel launch gaps, `NVLink`/`xGMI` collective latency, L2 cliffs, and MoE tile-padding waste. `scripts/engine_roofline.py` plots **all four orthogonal hardware dimensions** side-by-side against `./gpu_roofline --json hw.json`:
+
+![Multi-Dimensional GPU Inference Roofline Atlas](assets/multi_bottleneck_roofline.svg)
+
+1. **Panel 1 — Compute vs. Memory Roofline (`TFLOP/s` vs. `FLOPs/Byte`):** Plots Datasheet Peak (dashed gray), Empirical Matrix Core + HBM Ceiling (solid black), L2 Ceiling (green), and FP32 Vector ALU Ceiling (amber), with vertical drop-lines showing each kernel's distance from its hardware ceiling.
+2. **Panel 2 — All Data-Movement Pipes vs. Payload Bytes (`GB/s` vs. `Bytes`):** Overlays `On-Chip L2 -> HBM`, `NVLink/xGMI P2P`, and `Host PCIe` against transfer size so you can see whether a collective (`TP AllReduce`) or memory op is latency-starved or bandwidth-saturated.
+3. **Panel 3 — Dispatch Efficiency vs. Kernel Duration (`GPU Busy %` vs. `µs`):** Plots `t_kern / (t_kern + t_launch)` for Eager launches vs. `CUDA/HIP Graphs`, immediately flagging micro-kernels (`< 10 µs`) eaten by launch gaps.
+4. **Panel 4 — Matrix Core Utilization vs. Token Batch `M` (`% Roof` vs. `M`):** Shows how `BF16`, `FP8`, and `MXFP4/NVFP4` GEMMs and routed MoE experts (`m_per_expert = BS * top_k / E`) climb toward compute saturation.
+
+### Usage with `SGLang`, `vLLM`, Saved Traces, or Any HuggingFace Model
+
+```bash
+# Step 1: Measure empirical ceilings on your GPU (MI300X, MI355X, H100, B200)
+./gpu_roofline --json hw_mi355x.json --csv mi355x.csv
+
+# Mode A — Profile a live SGLang server (started with SGLANG_TORCH_PROFILER_DIR=/tmp/traces)
+python3 scripts/engine_roofline.py --hw hw_mi355x.json \
+  --engine sglang --url http://127.0.0.1:30000 --trace-dir /tmp/traces \
+  --batch-size 8 --prompt-len 4096 --output-len 16 -o sglang_roofline.svg
+
+# Mode B — Profile a live vLLM server (started with VLLM_TORCH_PROFILER_DIR=/tmp/traces)
+python3 scripts/engine_roofline.py --hw hw_mi355x.json \
+  --engine vllm --url http://127.0.0.1:8000 --trace-dir /tmp/traces \
+  --batch-size 8 --prompt-len 4096 --output-len 16 -o vllm_roofline.svg
+
+# Mode C — Analyze an existing PyTorch Kineto trace (.trace.json or .trace.json.gz)
+python3 scripts/engine_roofline.py --hw hw_mi355x.json --trace /tmp/traces/worker0.trace.json.gz
+
+# Mode D — Project any HuggingFace model architecture onto hardware + get optimization advice
+python3 scripts/engine_roofline.py --gpu mi355x --model Qwen/Qwen3-32B \
+  --tp 2 --quant fp8 --batch-size 4 --ctx-len 32768 -o qwen3_mi355x.svg
+```
+
+---
+
+## Why Datasheet TFLOP/s & Theoretical Rooflines Are Never 100% Reachable
+
+Even hand-written assembly kernels typically max out at **`72–85%` of datasheet TFLOP/s and HBM TB/s**—and real LLM layers often sit much lower depending on **both GPU architecture and model architecture**:
+
+1. **Power/TDP Clock Throttling (`Boost Clock` vs. `All-SM Sustained Clock`):**
+   Vendor datasheets multiply CUs/SMs by *single-CU peak boost frequency*. When all 132 SMs / 256–304 CUs execute dense Matrix instructions simultaneously, the chip hits its `700W–1,000W` power cap within milliseconds and drops clocks `15–25%`.
+2. **2:4 Sparsity Marketing vs. Dense LLM Weights:**
+   Headline Tensor/Matrix Core numbers on spec sheets frequently quote **2:4 structured sparsity** (`2x` dense TFLOP/s). Production LLMs almost universally serve **dense** weights (`50%` of the headline sparse figure).
+3. **Instruction-Mix Tax (Non-Matrix Ops Sharing Issue Bandwidth):**
+   Peak Matrix TFLOP/s assumes `100%` of cycles issue pure `MMA`/`MFMA` ops. Real kernels (`FlashAttention`, `FP8`/`MXFP4` GEMM, `Fused MoE`) must interleave shared-memory loads, pointer arithmetic, block-scale unpacking (`E8M0`/`FP8`), and online softmax `exp2f()` on Vector ALUs. Architectures with asynchronous warpgroup specialization (`Hopper WGMMA`, `Blackwell tcgen05`, `CDNA4 ping-pong wave scheduling`) hide more of this tax than synchronous pipelines.
+4. **HBM Refresh (`tRFC`) & Bus Turnaround (`~75–85%` Max Pin Efficiency):**
+   HBM DRAM cells are capacitors that periodically pause traffic to recharge (`tRFC`), alongside row precharge/activate delays and Read-to-Write bus turnaround bubbles.
+5. **Tile & Wave Quantization on Model Shapes (Especially Fine-Grained MoEs):**
+   Matrix Cores execute fixed tiles (`16x16`, `64x64`, `128x128`). In a `256`-expert `top-8` MoE at `BS = 4`, each active expert receives only `m ~= 1` token—padding `15` empty rows with zeros inside a `16`-row hardware tile! Likewise, if a GEMM launches `320` threadblocks on a `304`-CU MI300X, Wave 2 runs `16` blocks while `288` CUs (`95%` of the chip) sit idle.
+6. **Multi-Die / XCD NUMA Topology (`MI300X`/`MI355X` 8 XCDs, `B200` Dual-Die):**
+   Chiplet GPUs split L2 caches across multiple dies (`8` XCDs on MI300X/MI355X). Without XCD-aware threadblock swizzling, cross-die traffic and uneven L2 slice thrashing cap effective bandwidth well below aggregate spec.
 
 ---
 
