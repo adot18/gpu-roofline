@@ -66,14 +66,15 @@ Sweeping `B` from `4 KiB` to `2 GiB` (`./gpu_roofline` prints an ASCII chart in 
 | File | Lines | What It Does & What You Learn From Reading It |
 |---|---:|---|
 | [`gpu_compat.h`](gpu_compat.h) | ~75 | **Cross-vendor translation layer.** Maps `cudaMalloc` / `hipMalloc`, events, streams, graphs, and wavefront size (`32` on NVIDIA warps vs `64` on AMD CDNA waves) onto a single `gpu*` API so every file compiles unmodified on `nvcc` and `hipcc`. |
-| [`gpu_roofline.cpp`](gpu_roofline.cpp) | ~315 | **All-in-one empirical probe.** Runs all 8 benchmarks (`[1a/b]` Coalesced vs Strided HBM, `[2]` L2, `[3]` Shared/LDS, `[4]` FP32 VALU, `[5]` BF16 WMMA/MFMA Matrix Cores, `[6a/b/c]` CPU vs Eager vs Graph launch floor, `[7]` PCIe, `[8]` P2P `NVLink`/`xGMI`), prints the `4 KiB -> 2 GiB` ASCII regime chart, optionally saves `--csv`, and computes the **LLM Batch-Size `M` Ridge Point**. |
+| [`gpu_roofline.cpp`](gpu_roofline.cpp) | ~500 | **All-in-one empirical probe.** Measures Coalesced R+W / Read-Only / Strided HBM, L2, Shared/LDS, FP32 VALU & SFU (`exp2`/`rsqrt`), **BF16 + FP8 + FP4/MXFP4** Matrix Cores (with non-constant bit-toggle entropy for realistic TDP clocks), CPU vs Eager vs Graph launch floor, PCIe, and 1-to-1 + All-GPU Ring P2P, prints the `4 KiB -> 2 GiB` regime sweep, exports `--csv` / `--json`, and computes multi-precision Ridge Points. |
 | [`exercises/01_hbm_coalescing.cpp`](exercises/01_hbm_coalescing.cpp) | ~75 | **Pointers & Memory Coalescing.** Compares `float` (`32-bit`), `float4` (`128-bit` vectorized), and `stride-33` uncoalesced reads. Shows why contiguous lanes in a warp/wave must read adjacent bytes so the memory controller can merge requests into full `128-byte` HBM cache lines instead of wasting `~90%` of bus bandwidth. |
 | [`exercises/02_cache_and_shared_mem.cpp`](exercises/02_cache_and_shared_mem.cpp) | ~75 | **L2 Cliff & CU/SM Shared Memory (`__shared__` / LDS).** Sweeps array sizes from `4 MiB` up to `1024 MiB` so you can watch bandwidth fall off a `~3x` cliff the exact moment bytes exceed `prop.l2CacheSize`, then benchmarks per-SM/CU scratchpad SRAM (`40–100+ TB/s`)—the exact memory FlashAttention uses to avoid writing `N x N` attention matrices to HBM. |
 | [`exercises/03_valu_vs_matrix_cores.cpp`](exercises/03_valu_vs_matrix_cores.cpp) | ~90 | **Pipeline Latency, ILP, & Matrix/Tensor Cores.** Runs three compute kernels back-to-back: (1) a single dependent FMA chain `c = a*c + b` (stalls `~75%` of cycles waiting on 4-cycle ALU latency), (2) 8 independent FMA chains (`c0..c7` hitting `100%` Vector ALU peak via instruction-level parallelism), and (3) hardware **BF16 Matrix/Tensor Cores** (`wmma` / `mfma`, jumping another **`8–16x`** in TFLOP/s). |
 | [`exercises/04_launch_floor_and_graphs.cpp`](exercises/04_launch_floor_and_graphs.cpp) | ~80 | **Async Streams, Launch Overhead, & CUDA/HIP Graphs.** Separates what the CPU pays (`~1–3 µs` to drop a packet into a ring buffer) from the GPU's eager launch floor (`~2–5 µs`), then captures a 1,000-kernel chain into a **CUDA/HIP Graph** to slash inter-kernel dead air down to `~0.3–0.8 µs`. |
 | [`exercises/05_pcie_and_p2p_links.cpp`](exercises/05_pcie_and_p2p_links.cpp) | ~80 | **Off-Chip Links: Pageable vs Pinned PCIe & Multi-GPU P2P.** Demonstrates why `malloc()` pageable host memory crawls over PCIe (`~10–20 GB/s` due to CPU staging copies), why page-locked `gpuHostMalloc` unlocks the full PCIe DMA engine (`~50–60 GB/s`), and how `gpuDeviceEnablePeerAccess` lets GPU 0 read GPU 1's HBM directly over `NVLink` / `xGMI` (`300–450+ GB/s`). |
 | [`scripts/plot_sweep.py`](scripts/plot_sweep.py) | ~140 | **Zero-dependency SVG bandwidth sweep plotter.** Takes any number of CSV sweeps (`./gpu_roofline --csv mi300x.csv`, `mi355x.csv`, `h100.csv`) and renders a log-scale bandwidth curve highlighting the Latency-Bound, L2 Peak, and HBM Plateau zones. |
-| [`scripts/engine_roofline.py`](scripts/engine_roofline.py) | ~550 | **Multi-dimensional `SGLang` / `vLLM` / Model Roofline Analyzer & Optimization Advisor.** Profiles a live `SGLang` or `vLLM` server (via Kineto `/start_profile`), parses saved `.trace.json[.gz]` traces, or projects any HuggingFace `config.json` onto `--hw hw.json` across **4 orthogonal bottleneck planes** + prints ranked optimization prescriptions. |
+| [`scripts/engine_roofline.py`](scripts/engine_roofline.py) | ~740 | **Multi-dimensional `SGLang` / `vLLM` / Model Roofline Analyzer & Fusion Advisor.** Profiles live `SGLang` / `vLLM` servers, parses Kineto `.trace.json[.gz]` traces (with stream-gap measurement & fusible-kernel pair detection), or projects any HF `config.json` with **per-component mixed precision** (e.g. FP4 MoE experts + FP8 MLA/Attention, or FP4->FP8 upscale fallback on MI300X/H100) across 4 orthogonal bottleneck planes. |
+| [`tests/test_engine_roofline.py`](tests/test_engine_roofline.py) | ~140 | **Zero-dependency test suite (`python3 -m unittest discover -s tests`).** Validates HF mixed-precision auto-detection, MI300X FP4->FP8 upscale fallback vs MI355X native FP4, prefix-cache scaling, Kineto trace + fusion-pair parsing, and 4-panel SVG rendering. |
 
 ---
 
@@ -107,9 +108,17 @@ python3 scripts/engine_roofline.py --hw hw_mi355x.json \
 # Mode C — Analyze an existing PyTorch Kineto trace (.trace.json or .trace.json.gz)
 python3 scripts/engine_roofline.py --hw hw_mi355x.json --trace /tmp/traces/worker0.trace.json.gz
 
-# Mode D — Project any HuggingFace model architecture onto hardware + get optimization advice
-python3 scripts/engine_roofline.py --gpu mi355x --model Qwen/Qwen3-32B \
-  --tp 2 --quant fp8 --batch-size 4 --ctx-len 32768 -o qwen3_mi355x.svg
+# Mode D — Project any HuggingFace model architecture (auto-detects FP4 experts + FP8/BF16 attention!)
+python3 scripts/engine_roofline.py --gpu mi355x --model deepseek-v4-fp4 \
+  --tp 2 --batch-size 4 --ctx-len 32768 --precision-view all -o dsv4_mi355x.svg
+
+# Or compare on MI300X (shows FP4 -> FP8 upscale ceiling + 89% prefix-cache prefill skip):
+python3 scripts/engine_roofline.py --gpu mi300x --model deepseek-v4-fp4 \
+  --tp 4 --prefix-cache-hit 0.89 --precision-view all -o dsv4_mi300x.svg
+
+# Explicit mixed-precision overrides & single-precision zoom:
+python3 scripts/engine_roofline.py --gpu b200 --model deepseek-ai/DeepSeek-V3 \
+  --moe-quant fp4 --attn-quant fp8 --kv-quant fp8 --precision-view fp4 -o dsv3_fp4.svg
 ```
 
 ---

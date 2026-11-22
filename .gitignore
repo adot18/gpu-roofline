@@ -14,4 +14,6 @@ hw_*.json
 *.ncu-rep
 workloads/
 trace_out/
+__pycache__/
+*.pyc
 .DS_Store

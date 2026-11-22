@@ -1,222 +1,268 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1220 880" width="1220" height="880" style="font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif; background: #f8fafc;">
-<rect x="0" y="0" width="1220" height="880" fill="#f8fafc"/>
-<text x="610.0" y="30" text-anchor="middle" font-size="19" font-weight="700" fill="#0f172a">Multi-Dimensional GPU Inference Roofline Atlas — AMD Instinct MI355X (gfx950)</text>
-<text x="610.0" y="50" text-anchor="middle" font-size="12.5" fill="#475569">Sparse MoE Reference (FP8, TP=2, Decode BS=4 @ 32k ctx, Prefill=4096)</text>
-<circle cx="270" cy="70" r="5.5" fill="#2563eb"/>
-<text x="280" y="74" font-size="12" font-weight="600" fill="#1e293b">GEMM</text>
-<circle cx="415" cy="70" r="5.5" fill="#7c3aed"/>
-<text x="425" y="74" font-size="12" font-weight="600" fill="#1e293b">MoE</text>
-<circle cx="560" cy="70" r="5.5" fill="#059669"/>
-<text x="570" y="74" font-size="12" font-weight="600" fill="#1e293b">Attention</text>
-<circle cx="705" cy="70" r="5.5" fill="#d97706"/>
-<text x="715" y="74" font-size="12" font-weight="600" fill="#1e293b">Norm/Elem</text>
-<circle cx="850" cy="70" r="5.5" fill="#dc2626"/>
-<text x="860" y="74" font-size="12" font-weight="600" fill="#1e293b">Comm</text>
-<rect x="22" y="88" width="578" height="372" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
-<text x="38" y="112" font-size="13.5" font-weight="700" fill="#0f172a">1. Compute vs. Memory Roofline (Datasheet vs. Empirical)</text>
-<line x1="84" y1="130" x2="84" y2="420" stroke="#334155" stroke-width="1.3"/>
-<line x1="84" y1="420" x2="578" y2="420" stroke="#334155" stroke-width="1.3"/>
-<text x="331.0" y="448" text-anchor="middle" font-size="11.5" font-weight="600" fill="#334155">Operational Intensity (FLOPs / Byte, log10)</text>
-<text x="38" y="275.0" text-anchor="middle" font-size="11.5" font-weight="600" fill="#334155" transform="rotate(-90 38 275.0)">Performance (TFLOP/s, log10)</text>
-<line x1="126.7" y1="130" x2="126.7" y2="420" stroke="#f1f5f9"/>
-<text x="126.7" y="435" text-anchor="middle" font-size="10" fill="#64748b">0.5</text>
-<line x1="159.0" y1="130" x2="159.0" y2="420" stroke="#f1f5f9"/>
-<text x="159.0" y="435" text-anchor="middle" font-size="10" fill="#64748b">1</text>
-<line x1="266.4" y1="130" x2="266.4" y2="420" stroke="#f1f5f9"/>
-<text x="266.4" y="435" text-anchor="middle" font-size="10" fill="#64748b">10</text>
-<line x1="373.7" y1="130" x2="373.7" y2="420" stroke="#f1f5f9"/>
-<text x="373.7" y="435" text-anchor="middle" font-size="10" fill="#64748b">100</text>
-<line x1="481.1" y1="130" x2="481.1" y2="420" stroke="#f1f5f9"/>
-<text x="481.1" y="435" text-anchor="middle" font-size="10" fill="#64748b">1000</text>
-<line x1="556.1" y1="130" x2="556.1" y2="420" stroke="#f1f5f9"/>
-<text x="556.1" y="435" text-anchor="middle" font-size="10" fill="#64748b">5000</text>
-<line x1="84" y1="372.9" x2="578" y2="372.9" stroke="#f1f5f9"/>
-<text x="78" y="375.9" text-anchor="end" font-size="10" fill="#64748b">1</text>
-<line x1="84" y1="305.4" x2="578" y2="305.4" stroke="#f1f5f9"/>
-<text x="78" y="308.4" text-anchor="end" font-size="10" fill="#64748b">10</text>
-<line x1="84" y1="238.0" x2="578" y2="238.0" stroke="#f1f5f9"/>
-<text x="78" y="241.0" text-anchor="end" font-size="10" fill="#64748b">100</text>
-<line x1="84" y1="170.6" x2="578" y2="170.6" stroke="#f1f5f9"/>
-<text x="78" y="173.6" text-anchor="end" font-size="10" fill="#64748b">1000</text>
-<path d="M84.0,359.1 L91.7,354.3 L99.4,349.4 L107.1,344.6 L114.9,339.7 L122.6,334.9 L130.3,330.0 L138.0,325.2 L145.7,320.3 L153.4,315.5 L161.2,310.6 L168.9,305.8 L176.6,300.9 L184.3,296.1 L192.0,291.3 L199.7,286.4 L207.5,281.6 L215.2,276.7 L222.9,271.9 L230.6,267.0 L238.3,262.2 L246.0,257.3 L253.8,252.5 L261.5,247.6 L269.2,242.8 L276.9,237.9 L284.6,233.1 L292.3,228.2 L300.0,223.4 L307.8,218.6 L315.5,213.7 L323.2,208.9 L330.9,204.0 L338.6,199.2 L346.3,194.3 L354.1,189.5 L361.8,184.6 L369.5,179.8 L377.2,174.9 L384.9,170.1 L392.6,165.2 L400.4,160.4 L408.1,155.5 L415.8,150.7 L423.5,145.9 L431.2,143.8 L438.9,143.8 L446.7,143.8 L454.4,143.8 L462.1,143.8 L469.8,143.8 L477.5,143.8 L485.2,143.8 L493.0,143.8 L500.7,143.8 L508.4,143.8 L516.1,143.8 L523.8,143.8 L531.5,143.8 L539.2,143.8 L547.0,143.8 L554.7,143.8 L562.4,143.8 L570.1,143.8 L577.8,143.8 L578.0,143.8" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4,4"/>
-<text x="433.4" y="138.8" font-size="9.2" font-weight="600" fill="#94a3b8">Datasheet (2500 TF/s, 8.0 TB/s)</text>
-<path d="M84.0,334.6 L91.7,329.7 L99.4,324.9 L107.1,320.0 L114.9,315.2 L122.6,310.3 L130.3,305.5 L138.0,300.6 L145.7,295.8 L153.4,290.9 L161.2,286.1 L168.9,281.2 L176.6,276.4 L184.3,271.6 L192.0,266.7 L199.7,261.9 L207.5,257.0 L215.2,252.2 L222.9,247.3 L230.6,242.5 L238.3,237.6 L246.0,232.8 L253.8,227.9 L261.5,223.1 L269.2,218.2 L276.9,213.4 L284.6,208.5 L292.3,203.7 L300.0,198.9 L307.8,194.0 L315.5,189.2 L323.2,184.3 L330.9,179.5 L338.6,174.6 L346.3,169.8 L354.1,164.9 L361.8,160.1 L369.5,155.2 L377.2,151.5 L384.9,151.5 L392.6,151.5 L400.4,151.5 L408.1,151.5 L415.8,151.5 L423.5,151.5 L431.2,151.5 L438.9,151.5 L446.7,151.5 L454.4,151.5 L462.1,151.5 L469.8,151.5 L477.5,151.5 L485.2,151.5 L493.0,151.5 L500.7,151.5 L508.4,151.5 L516.1,151.5 L523.8,151.5 L531.5,151.5 L539.2,151.5 L547.0,151.5 L554.7,151.5 L562.4,151.5 L570.1,151.5 L577.8,151.5 L578.0,151.5" fill="none" stroke="#10b981" stroke-width="2" stroke-dasharray="5,3"/>
-<text x="174.7" y="271.6" font-size="9.2" font-weight="600" fill="#10b981">L2 (18.5 TB/s)</text>
-<path d="M84.0,368.3 L91.7,363.4 L99.4,358.6 L107.1,353.7 L114.9,348.9 L122.6,344.0 L130.3,339.2 L138.0,334.3 L145.7,329.5 L153.4,324.7 L161.2,319.8 L168.9,315.0 L176.6,310.1 L184.3,305.3 L192.0,300.4 L199.7,295.6 L207.5,290.7 L215.2,285.9 L222.9,281.0 L230.6,276.2 L238.3,271.3 L246.0,266.5 L253.8,261.6 L261.5,256.8 L269.2,252.0 L276.9,247.1 L284.6,242.3 L292.3,237.4 L300.0,232.6 L307.8,227.7 L315.5,222.9 L323.2,218.0 L330.9,213.2 L338.6,208.3 L346.3,203.5 L354.1,198.6 L361.8,193.8 L369.5,188.9 L377.2,184.1 L384.9,179.3 L392.6,174.4 L400.4,169.6 L408.1,164.7 L415.8,159.9 L423.5,155.0 L431.2,151.5 L438.9,151.5 L446.7,151.5 L454.4,151.5 L462.1,151.5 L469.8,151.5 L477.5,151.5 L485.2,151.5 L493.0,151.5 L500.7,151.5 L508.4,151.5 L516.1,151.5 L523.8,151.5 L531.5,151.5 L539.2,151.5 L547.0,151.5 L554.7,151.5 L562.4,151.5 L570.1,151.5 L577.8,151.5 L578.0,151.5" fill="none" stroke="#0f172a" stroke-width="2"/>
-<text x="433.4" y="162.5" font-size="9.2" font-weight="600" fill="#0f172a">Empirical (5.85 TB/s, 1920 TF/s)</text>
-<path d="M84.0,368.3 L91.7,363.4 L99.4,358.6 L107.1,353.7 L114.9,348.9 L122.6,344.0 L130.3,339.2 L138.0,334.3 L145.7,329.5 L153.4,324.7 L161.2,319.8 L168.9,315.0 L176.6,310.1 L184.3,305.3 L192.0,300.4 L199.7,295.6 L207.5,290.7 L215.2,285.9 L222.9,281.0 L230.6,276.2 L238.3,271.3 L246.0,266.5 L253.8,261.6 L261.5,256.8 L269.2,252.0 L276.9,247.1 L284.6,242.3 L292.3,237.4 L300.0,232.6 L307.8,227.7 L315.5,227.1 L323.2,227.1 L330.9,227.1 L338.6,227.1 L346.3,227.1 L354.1,227.1 L361.8,227.1 L369.5,227.1 L377.2,227.1 L384.9,227.1 L392.6,227.1 L400.4,227.1 L408.1,227.1 L415.8,227.1 L423.5,227.1 L431.2,227.1 L438.9,227.1 L446.7,227.1 L454.4,227.1 L462.1,227.1 L469.8,227.1 L477.5,227.1 L485.2,227.1 L493.0,227.1 L500.7,227.1 L508.4,227.1 L516.1,227.1 L523.8,227.1 L531.5,227.1 L539.2,227.1 L547.0,227.1 L554.7,227.1 L562.4,227.1 L570.1,227.1 L577.8,227.1 L578.0,227.1" fill="none" stroke="#d97706" stroke-width="2" stroke-dasharray="3,3"/>
-<text x="433.4" y="222.1" font-size="9.2" font-weight="600" fill="#d97706">FP32 VALU (145 TF/s)</text>
-<line x1="429.1" y1="151.5" x2="429.1" y2="420" stroke="#ef4444" stroke-dasharray="2,3"/>
-<text x="425.1" y="412" text-anchor="end" font-size="9.5" fill="#dc2626">Ridge=328 F/B</text>
-<line x1="255.9" y1="266.3" x2="255.9" y2="260.3" stroke="#cbd5e1" stroke-dasharray="2,2"/>
-<circle cx="255.9" cy="266.3" r="5.6" fill="#2563eb" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="266.5" y="269.3" text-anchor="start" font-size="8.8" font-weight="500" fill="#1e293b">Decode QKV Linear (M=4)</text>
-<line x1="191.3" y1="321.3" x2="191.3" y2="300.9" stroke="#cbd5e1" stroke-dasharray="2,2"/>
-<circle cx="191.3" cy="321.3" r="9.2" fill="#7c3aed" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="205.5" y="324.3" text-anchor="start" font-size="8.8" font-weight="500" fill="#1e293b">Decode Fused MoE (m/exp</text>
-<line x1="330.5" y1="219.4" x2="330.5" y2="213.4" stroke="#cbd5e1" stroke-dasharray="2,2"/>
-<circle cx="330.5" cy="219.4" r="5.6" fill="#2563eb" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="341.2" y="222.4" text-anchor="start" font-size="8.8" font-weight="500" fill="#1e293b">SpecDec Verify GEMM (M=</text>
-<line x1="320.6" y1="225.2" x2="320.6" y2="219.7" stroke="#cbd5e1" stroke-dasharray="2,2"/>
-<circle cx="320.6" cy="225.2" r="6.1" fill="#059669" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="331.7" y="240.2" text-anchor="start" font-size="8.8" font-weight="500" fill="#1e293b">Decode Paged KV Attn (3</text>
-<line x1="527.4" y1="156.3" x2="527.4" y2="151.5" stroke="#cbd5e1" stroke-dasharray="2,2"/>
-<circle cx="527.4" cy="156.3" r="10.0" fill="#2563eb" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="512.4" y="159.3" text-anchor="end" font-size="8.8" font-weight="500" fill="#1e293b">Prefill QKV GEMM (M=409</text>
-<line x1="509.0" y1="156.3" x2="509.0" y2="151.5" stroke="#cbd5e1" stroke-dasharray="2,2"/>
-<circle cx="509.0" cy="156.3" r="8.4" fill="#059669" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="495.6" y="171.3" text-anchor="end" font-size="8.8" font-weight="500" fill="#1e293b">Prefill FlashAttn (N=40</text>
-<line x1="150.5" y1="417.6" x2="150.5" y2="292.8" stroke="#cbd5e1" stroke-dasharray="2,2"/>
-<circle cx="150.5" cy="417.6" r="4.8" fill="#d97706" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="160.4" y="416.0" text-anchor="start" font-size="8.8" font-weight="500" fill="#1e293b">Decode RMSNorm+RoPE (M=</text>
-<rect x="620" y="88" width="578" height="372" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
-<text x="636" y="112" font-size="13.5" font-weight="700" fill="#0f172a">2. All Data-Movement Pipes vs. Payload Size (L2 / HBM / P2P / PCIe)</text>
-<line x1="682" y1="130" x2="682" y2="420" stroke="#334155" stroke-width="1.3"/>
-<line x1="682" y1="420" x2="1176" y2="420" stroke="#334155" stroke-width="1.3"/>
-<text x="929.0" y="448" text-anchor="middle" font-size="11.5" font-weight="600" fill="#334155">Payload Bytes Moved per Kernel or Collective (log2)</text>
-<text x="636" y="275.0" text-anchor="middle" font-size="11.5" font-weight="600" fill="#334155" transform="rotate(-90 636 275.0)">Achieved Bandwidth (GB/s, log10)</text>
-<line x1="682.0" y1="130" x2="682.0" y2="420" stroke="#f1f5f9"/>
-<text x="682.0" y="435" text-anchor="middle" font-size="10" fill="#64748b">4K</text>
-<line x1="786.0" y1="130" x2="786.0" y2="420" stroke="#f1f5f9"/>
-<text x="786.0" y="435" text-anchor="middle" font-size="10" fill="#64748b">64K</text>
-<line x1="890.0" y1="130" x2="890.0" y2="420" stroke="#f1f5f9"/>
-<text x="890.0" y="435" text-anchor="middle" font-size="10" fill="#64748b">1M</text>
-<line x1="994.0" y1="130" x2="994.0" y2="420" stroke="#f1f5f9"/>
-<text x="994.0" y="435" text-anchor="middle" font-size="10" fill="#64748b">16M</text>
-<line x1="1098.0" y1="130" x2="1098.0" y2="420" stroke="#f1f5f9"/>
-<text x="1098.0" y="435" text-anchor="middle" font-size="10" fill="#64748b">256M</text>
-<line x1="1176.0" y1="130" x2="1176.0" y2="420" stroke="#f1f5f9"/>
-<text x="1176.0" y="435" text-anchor="middle" font-size="10" fill="#64748b">2G</text>
-<line x1="682" y1="355.2" x2="1176" y2="355.2" stroke="#f1f5f9"/>
-<text x="676" y="358.2" text-anchor="end" font-size="9.5" fill="#64748b">10 GB/s</text>
-<line x1="682" y1="290.5" x2="1176" y2="290.5" stroke="#f1f5f9"/>
-<text x="676" y="293.5" text-anchor="end" font-size="9.5" fill="#64748b">100 GB/s</text>
-<line x1="682" y1="225.7" x2="1176" y2="225.7" stroke="#f1f5f9"/>
-<text x="676" y="228.7" text-anchor="end" font-size="9.5" fill="#64748b">1 TB/s</text>
-<line x1="682" y1="160.9" x2="1176" y2="160.9" stroke="#f1f5f9"/>
-<text x="676" y="163.9" text-anchor="end" font-size="9.5" fill="#64748b">10 TB/s</text>
-<path d="M682.0,355.9 L695.0,346.2 L708.0,336.5 L721.0,326.7 L734.0,317.0 L747.0,307.3 L760.0,297.6 L773.0,287.9 L786.0,278.2 L799.0,268.5 L812.0,258.9 L825.0,249.4 L838.0,239.9 L851.0,230.5 L864.0,221.3 L877.0,212.3 L890.0,203.5 L903.0,195.1 L916.0,187.2 L929.0,179.8 L942.0,173.1 L955.0,167.2 L968.0,162.0 L981.0,157.8 L994.0,154.3 L1007.0,151.6 L1020.0,149.5 L1033.0,147.9 L1046.0,146.8 L1059.0,146.3 L1072.0,147.2 L1085.0,151.5 L1098.0,160.8 L1111.0,169.9 L1124.0,174.3 L1137.0,175.6 L1150.0,175.9 L1163.0,176.0 L1176.0,176.0" fill="none" stroke="#0f172a" stroke-width="2.2"/>
-<text x="1009.2" y="139.0" font-size="9.5" font-weight="600" fill="#0f172a">On-Chip L2 -> HBM Cliff</text>
-<path d="M682.0,420.0 L695.0,420.0 L708.0,411.3 L721.0,401.6 L734.0,391.9 L747.0,382.3 L760.0,372.6 L773.0,363.0 L786.0,353.5 L799.0,344.0 L812.0,334.7 L825.0,325.5 L838.0,316.6 L851.0,307.9 L864.0,299.7 L877.0,291.9 L890.0,284.7 L903.0,278.3 L916.0,272.6 L929.0,267.8 L942.0,263.7 L955.0,260.5 L968.0,258.0 L981.0,256.1 L994.0,254.6 L1007.0,253.5 L1020.0,252.8 L1033.0,252.2 L1046.0,251.8 L1059.0,251.5 L1072.0,251.3 L1085.0,251.1 L1098.0,251.0 L1111.0,250.9 L1124.0,250.9 L1137.0,250.9 L1150.0,250.8 L1163.0,250.8 L1176.0,250.8" fill="none" stroke="#dc2626" stroke-width="2"/>
-<text x="1088.7" y="244.8" font-size="9.5" font-weight="600" fill="#dc2626">NVLink/xGMI (410 GB/s)</text>
-<path d="M682.0,420.0 L695.0,420.0 L708.0,420.0 L721.0,416.5 L734.0,407.0 L747.0,397.5 L760.0,388.3 L773.0,379.2 L786.0,370.3 L799.0,361.8 L812.0,353.7 L825.0,346.2 L838.0,339.2 L851.0,333.1 L864.0,327.7 L877.0,323.2 L890.0,319.5 L903.0,316.5 L916.0,314.2 L929.0,312.5 L942.0,311.2 L955.0,310.2 L968.0,309.5 L981.0,309.0 L994.0,308.7 L1007.0,308.4 L1020.0,308.2 L1033.0,308.1 L1046.0,308.0 L1059.0,307.9 L1072.0,307.9 L1085.0,307.9 L1098.0,307.8 L1111.0,307.8 L1124.0,307.8 L1137.0,307.8 L1150.0,307.8 L1163.0,307.8 L1176.0,307.8" fill="none" stroke="#64748b" stroke-width="1.8" stroke-dasharray="4,3"/>
-<text x="1088.7" y="320.8" font-size="9.5" font-weight="600" fill="#475569">Host PCIe (54 GB/s)</text>
-<circle cx="1045.5" cy="181.8" r="5.0" fill="#2563eb" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="1035.5" y="184.8" text-anchor="end" font-size="8.8" font-weight="500" fill="#1e293b">Decode QKV Linear (M=4</text>
-<circle cx="1134.2" cy="195.6" r="5.0" fill="#7c3aed" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="1124.2" y="198.6" text-anchor="end" font-size="8.8" font-weight="500" fill="#1e293b">Decode Fused MoE (m/ex</text>
-<circle cx="1045.8" cy="181.7" r="5.0" fill="#2563eb" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="1035.8" y="220.7" text-anchor="end" font-size="8.8" font-weight="500" fill="#1e293b">SpecDec Verify GEMM (M</text>
-<circle cx="1072.0" cy="181.3" r="5.0" fill="#059669" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="1062.0" y="232.3" text-anchor="end" font-size="8.8" font-weight="500" fill="#1e293b">Decode Paged KV Attn (</text>
-<circle cx="1087.0" cy="239.9" r="5.0" fill="#2563eb" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="1077.0" y="254.9" text-anchor="end" font-size="8.8" font-weight="500" fill="#1e293b">Prefill QKV GEMM (M=40</text>
-<circle cx="1076.4" cy="228.8" r="5.0" fill="#059669" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="1066.4" y="267.8" text-anchor="end" font-size="8.8" font-weight="500" fill="#1e293b">Prefill FlashAttn (N=4</text>
-<circle cx="822.2" cy="263.5" r="5.0" fill="#d97706" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="832.2" y="266.5" text-anchor="start" font-size="8.8" font-weight="500" fill="#1e293b">Decode RMSNorm+RoPE (M</text>
-<circle cx="781.0" cy="357.1" r="5.0" fill="#dc2626" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="791.0" y="360.1" text-anchor="start" font-size="8.8" font-weight="500" fill="#1e293b">Decode TP2 AllReduce</text>
-<circle cx="1041.0" cy="251.9" r="5.0" fill="#dc2626" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="1051.0" y="290.9" text-anchor="start" font-size="8.8" font-weight="500" fill="#1e293b">Prefill TP2 AllReduce</text>
-<rect x="22" y="482" width="578" height="372" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
-<text x="38" y="506" font-size="13.5" font-weight="700" fill="#0f172a">3. Kernel Dispatch Efficiency vs. Kernel Duration (Eager vs. Graphs)</text>
-<line x1="84" y1="524" x2="84" y2="814" stroke="#334155" stroke-width="1.3"/>
-<line x1="84" y1="814" x2="578" y2="814" stroke="#334155" stroke-width="1.3"/>
-<text x="331.0" y="842" text-anchor="middle" font-size="11.5" font-weight="600" fill="#334155">Mean GPU Kernel Duration (microseconds, log10)</text>
-<text x="38" y="669.0" text-anchor="middle" font-size="11.5" font-weight="600" fill="#334155" transform="rotate(-90 38 669.0)">Effective GPU Busy % (t_kern / (t_kern + t_launch))</text>
-<line x1="125.3" y1="524" x2="125.3" y2="814" stroke="#f1f5f9"/>
-<text x="125.3" y="829" text-anchor="middle" font-size="10" fill="#64748b">1 us</text>
-<line x1="221.1" y1="524" x2="221.1" y2="814" stroke="#f1f5f9"/>
-<text x="221.1" y="829" text-anchor="middle" font-size="10" fill="#64748b">5 us</text>
-<line x1="262.4" y1="524" x2="262.4" y2="814" stroke="#f1f5f9"/>
-<text x="262.4" y="829" text-anchor="middle" font-size="10" fill="#64748b">10 us</text>
-<line x1="358.3" y1="524" x2="358.3" y2="814" stroke="#f1f5f9"/>
-<text x="358.3" y="829" text-anchor="middle" font-size="10" fill="#64748b">50 us</text>
-<line x1="399.6" y1="524" x2="399.6" y2="814" stroke="#f1f5f9"/>
-<text x="399.6" y="829" text-anchor="middle" font-size="10" fill="#64748b">100 us</text>
-<line x1="495.4" y1="524" x2="495.4" y2="814" stroke="#f1f5f9"/>
-<text x="495.4" y="829" text-anchor="middle" font-size="10" fill="#64748b">500 us</text>
-<line x1="536.7" y1="524" x2="536.7" y2="814" stroke="#f1f5f9"/>
-<text x="536.7" y="829" text-anchor="middle" font-size="10" fill="#64748b">1000 us</text>
-<line x1="84" y1="814.0" x2="578" y2="814.0" stroke="#f1f5f9"/>
-<text x="78" y="817.0" text-anchor="end" font-size="10" fill="#64748b">0%</text>
-<line x1="84" y1="741.5" x2="578" y2="741.5" stroke="#f1f5f9"/>
-<text x="78" y="744.5" text-anchor="end" font-size="10" fill="#64748b">25%</text>
-<line x1="84" y1="669.0" x2="578" y2="669.0" stroke="#f1f5f9"/>
-<text x="78" y="672.0" text-anchor="end" font-size="10" fill="#64748b">50%</text>
-<line x1="84" y1="596.5" x2="578" y2="596.5" stroke="#f1f5f9"/>
-<text x="78" y="599.5" text-anchor="end" font-size="10" fill="#64748b">75%</text>
-<line x1="84" y1="524.0" x2="578" y2="524.0" stroke="#f1f5f9"/>
-<text x="78" y="527.0" text-anchor="end" font-size="10" fill="#64748b">100%</text>
-<path d="M84.0,767.2 L94.9,759.6 L105.7,751.1 L116.6,741.7 L127.4,731.3 L138.3,720.1 L149.2,708.2 L160.0,695.7 L170.9,682.7 L181.7,669.6 L192.6,656.4 L203.5,643.4 L214.3,630.8 L225.2,618.8 L236.0,607.6 L246.9,597.2 L257.7,587.7 L268.6,579.1 L279.5,571.4 L290.3,564.6 L301.2,558.6 L312.0,553.5 L322.9,549.0 L333.8,545.1 L344.6,541.8 L355.5,539.0 L366.3,536.6 L377.2,534.6 L388.1,532.9 L398.9,531.4 L409.8,530.2 L420.6,529.2 L431.5,528.3 L442.4,527.6 L453.2,527.0 L464.1,526.5 L474.9,526.1 L485.8,525.8 L496.7,525.5 L507.5,525.2 L518.4,525.0 L529.2,524.9 L540.1,524.7 L550.9,524.6 L561.8,524.5 L572.7,524.4" fill="none" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,3"/>
-<path d="M84.0,656.4 L94.9,643.4 L105.7,630.8 L116.6,618.9 L127.4,607.6 L138.3,597.2 L149.2,587.7 L160.0,579.1 L170.9,571.4 L181.7,564.6 L192.6,558.6 L203.5,553.5 L214.3,549.0 L225.2,545.1 L236.0,541.8 L246.9,539.0 L257.7,536.6 L268.6,534.6 L279.5,532.9 L290.3,531.4 L301.2,530.2 L312.0,529.2 L322.9,528.3 L333.8,527.6 L344.6,527.0 L355.5,526.5 L366.3,526.1 L377.2,525.8 L388.1,525.5 L398.9,525.2 L409.8,525.0 L420.6,524.9 L431.5,524.7 L442.4,524.6 L453.2,524.5 L464.1,524.4 L474.9,524.3 L485.8,524.3 L496.7,524.2 L507.5,524.2 L518.4,524.2 L529.2,524.1 L540.1,524.1 L550.9,524.1 L561.8,524.1 L572.7,524.1" fill="none" stroke="#059669" stroke-width="2.2"/>
-<text x="172.2" y="547.2" font-size="9.5" font-weight="600" fill="#059669">CUDA/HIP Graph (0.42 us gap)</text>
-<text x="273.3" y="616.8" font-size="9.5" font-weight="600" fill="#dc2626">Eager Launch (2.6 us gap)</text>
-<circle cx="282.0" cy="569.7" r="5.0" fill="#2563eb" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="292.0" y="572.7" text-anchor="start" font-size="8.8" font-weight="500" fill="#1e293b">Decode QKV Linear (M=4</text>
-<circle cx="452.2" cy="527.1" r="5.0" fill="#7c3aed" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="442.2" y="534.0" text-anchor="end" font-size="8.8" font-weight="500" fill="#1e293b">Decode Fused MoE (m/ex</text>
-<circle cx="282.5" cy="569.4" r="5.0" fill="#2563eb" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="292.5" y="584.4" text-anchor="start" font-size="8.8" font-weight="500" fill="#1e293b">SpecDec Verify GEMM (M</text>
-<circle cx="323.2" cy="548.9" r="5.0" fill="#059669" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="333.2" y="551.9" text-anchor="start" font-size="8.8" font-weight="500" fill="#1e293b">Decode Paged KV Attn (</text>
-<circle cx="471.0" cy="526.3" r="5.0" fill="#2563eb" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="461.0" y="553.3" text-anchor="end" font-size="8.8" font-weight="500" fill="#1e293b">Prefill QKV GEMM (M=40</text>
-<circle cx="430.8" cy="528.4" r="5.0" fill="#059669" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="440.8" y="567.4" text-anchor="start" font-size="8.8" font-weight="500" fill="#1e293b">Prefill FlashAttn (N=4</text>
-<circle cx="100.5" cy="755.3" r="5.0" fill="#d97706" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="110.5" y="758.3" text-anchor="start" font-size="8.8" font-weight="500" fill="#1e293b">Decode RMSNorm+RoPE (M</text>
-<circle cx="233.4" cy="610.3" r="5.0" fill="#dc2626" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="243.4" y="613.3" text-anchor="start" font-size="8.8" font-weight="500" fill="#1e293b">Decode TP2 AllReduce</text>
-<circle cx="423.4" cy="529.0" r="5.0" fill="#dc2626" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="433.4" y="580.0" text-anchor="start" font-size="8.8" font-weight="500" fill="#1e293b">Prefill TP2 AllReduce</text>
-<rect x="620" y="482" width="578" height="372" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
-<text x="636" y="506" font-size="13.5" font-weight="700" fill="#0f172a">4. Matrix Core Utilization vs. Batch / Expert Tokens M (Batch Knee)</text>
-<line x1="682" y1="524" x2="682" y2="814" stroke="#334155" stroke-width="1.3"/>
-<line x1="682" y1="814" x2="1176" y2="814" stroke="#334155" stroke-width="1.3"/>
-<text x="929.0" y="842" text-anchor="middle" font-size="11.5" font-weight="600" fill="#334155">Tokens per GEMM or Routed MoE Expert M (log2)</text>
-<text x="636" y="669.0" text-anchor="middle" font-size="11.5" font-weight="600" fill="#334155" transform="rotate(-90 636 669.0)">% of Empirical BF16 Matrix Ceiling</text>
-<line x1="682.0" y1="524" x2="682.0" y2="814" stroke="#f1f5f9"/>
-<text x="682.0" y="829" text-anchor="middle" font-size="10" fill="#64748b">M=1</text>
-<line x1="758.0" y1="524" x2="758.0" y2="814" stroke="#f1f5f9"/>
-<text x="758.0" y="829" text-anchor="middle" font-size="10" fill="#64748b">M=4</text>
-<line x1="834.0" y1="524" x2="834.0" y2="814" stroke="#f1f5f9"/>
-<text x="834.0" y="829" text-anchor="middle" font-size="10" fill="#64748b">M=16</text>
-<line x1="910.0" y1="524" x2="910.0" y2="814" stroke="#f1f5f9"/>
-<text x="910.0" y="829" text-anchor="middle" font-size="10" fill="#64748b">M=64</text>
-<line x1="986.0" y1="524" x2="986.0" y2="814" stroke="#f1f5f9"/>
-<text x="986.0" y="829" text-anchor="middle" font-size="10" fill="#64748b">M=256</text>
-<line x1="1062.0" y1="524" x2="1062.0" y2="814" stroke="#f1f5f9"/>
-<text x="1062.0" y="829" text-anchor="middle" font-size="10" fill="#64748b">M=1024</text>
-<line x1="1138.0" y1="524" x2="1138.0" y2="814" stroke="#f1f5f9"/>
-<text x="1138.0" y="829" text-anchor="middle" font-size="10" fill="#64748b">M=4096</text>
-<line x1="682" y1="814.0" x2="1176" y2="814.0" stroke="#f1f5f9"/>
-<text x="676" y="817.0" text-anchor="end" font-size="10" fill="#64748b">0%</text>
-<line x1="682" y1="745.0" x2="1176" y2="745.0" stroke="#f1f5f9"/>
-<text x="676" y="748.0" text-anchor="end" font-size="10" fill="#64748b">25%</text>
-<line x1="682" y1="675.9" x2="1176" y2="675.9" stroke="#f1f5f9"/>
-<text x="676" y="678.9" text-anchor="end" font-size="10" fill="#64748b">50%</text>
-<line x1="682" y1="606.9" x2="1176" y2="606.9" stroke="#f1f5f9"/>
-<text x="676" y="609.9" text-anchor="end" font-size="10" fill="#64748b">75%</text>
-<line x1="682" y1="537.8" x2="1176" y2="537.8" stroke="#f1f5f9"/>
-<text x="676" y="540.8" text-anchor="end" font-size="10" fill="#64748b">100%</text>
-<path d="M682.0,813.2 L691.5,813.0 L701.0,812.8 L710.5,812.6 L720.0,812.3 L729.5,812.0 L739.0,811.6 L748.5,811.2 L758.0,810.6 L767.5,810.0 L777.0,809.2 L786.5,808.3 L796.0,807.3 L805.5,806.0 L815.0,804.5 L824.5,802.7 L834.0,800.5 L843.5,798.0 L853.0,795.0 L862.5,791.4 L872.0,787.1 L881.5,782.0 L891.0,775.9 L900.5,768.7 L910.0,760.1 L919.5,750.0 L929.0,737.8 L938.5,723.4 L948.0,706.3 L957.5,685.9 L967.0,661.7 L976.5,632.8 L986.0,598.6 L995.5,571.0 L1005.0,571.0 L1014.5,571.0 L1024.0,571.0 L1033.5,571.0 L1043.0,571.0 L1052.5,571.0 L1062.0,571.0 L1071.5,571.0 L1081.0,571.0 L1090.5,571.0 L1100.0,571.0 L1109.5,571.0 L1119.0,571.0 L1128.5,571.0 L1138.0,571.0 L1147.5,571.0 L1157.0,571.0 L1166.5,571.0 L1176.0,571.0" fill="none" stroke="#64748b" stroke-width="2"/>
-<text x="980.1" y="659.3" font-size="9.2" font-weight="600" fill="#64748b">BF16 Weights</text>
-<path d="M682.0,812.3 L691.5,812.0 L701.0,811.6 L710.5,811.2 L720.0,810.6 L729.5,810.0 L739.0,809.2 L748.5,808.3 L758.0,807.3 L767.5,806.0 L777.0,804.5 L786.5,802.7 L796.0,800.5 L805.5,798.0 L815.0,795.0 L824.5,791.4 L834.0,787.1 L843.5,782.0 L853.0,775.9 L862.5,768.7 L872.0,760.1 L881.5,750.0 L891.0,737.8 L900.5,723.4 L910.0,706.3 L919.5,685.9 L929.0,661.7 L938.5,632.8 L948.0,598.6 L957.5,571.0 L967.0,571.0 L976.5,571.0 L986.0,571.0 L995.5,571.0 L1005.0,571.0 L1014.5,571.0 L1024.0,571.0 L1033.5,571.0 L1043.0,571.0 L1052.5,571.0 L1062.0,571.0 L1071.5,571.0 L1081.0,571.0 L1090.5,571.0 L1100.0,571.0 L1109.5,571.0 L1119.0,571.0 L1128.5,571.0 L1138.0,571.0 L1147.5,571.0 L1157.0,571.0 L1166.5,571.0 L1176.0,571.0" fill="none" stroke="#2563eb" stroke-width="2"/>
-<text x="942.1" y="620.7" font-size="9.2" font-weight="600" fill="#2563eb">FP8 Weights</text>
-<path d="M682.0,810.6 L691.5,810.0 L701.0,809.2 L710.5,808.3 L720.0,807.3 L729.5,806.0 L739.0,804.5 L748.5,802.7 L758.0,800.5 L767.5,798.0 L777.0,795.0 L786.5,791.4 L796.0,787.1 L805.5,782.0 L815.0,775.9 L824.5,768.7 L834.0,760.1 L843.5,750.0 L853.0,737.8 L862.5,723.4 L872.0,706.3 L881.5,685.9 L891.0,661.7 L900.5,632.8 L910.0,598.6 L919.5,571.0 L929.0,571.0 L938.5,571.0 L948.0,571.0 L957.5,571.0 L967.0,571.0 L976.5,571.0 L986.0,571.0 L995.5,571.0 L1005.0,571.0 L1014.5,571.0 L1024.0,571.0 L1033.5,571.0 L1043.0,571.0 L1052.5,571.0 L1062.0,571.0 L1071.5,571.0 L1081.0,571.0 L1090.5,571.0 L1100.0,571.0 L1109.5,571.0 L1119.0,571.0 L1128.5,571.0 L1138.0,571.0 L1147.5,571.0 L1157.0,571.0 L1166.5,571.0 L1176.0,571.0" fill="none" stroke="#7c3aed" stroke-width="2"/>
-<text x="904.1" y="587.5" font-size="9.2" font-weight="600" fill="#7c3aed">MXFP4/NVFP4 Weights</text>
-<circle cx="758.0" cy="808.5" r="5.2" fill="#2563eb" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="768.2" y="810.0" text-anchor="start" font-size="8.8" font-weight="500" fill="#1e293b">Decode QKV Linear (M=4</text>
-<circle cx="682.0" cy="813.2" r="5.2" fill="#7c3aed" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="692.2" y="792.2" text-anchor="start" font-size="8.8" font-weight="500" fill="#1e293b">Decode Fused MoE (m/ex</text>
-<circle cx="846.2" cy="786.8" r="5.2" fill="#2563eb" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="856.4" y="789.8" text-anchor="start" font-size="8.8" font-weight="500" fill="#1e293b">SpecDec Verify GEMM (M</text>
-<circle cx="758.0" cy="791.7" r="5.2" fill="#059669" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="768.2" y="794.7" text-anchor="start" font-size="8.8" font-weight="500" fill="#1e293b">Decode Paged KV Attn (</text>
-<circle cx="1138.0" cy="579.5" r="5.2" fill="#2563eb" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="1127.8" y="582.5" text-anchor="end" font-size="8.8" font-weight="500" fill="#1e293b">Prefill QKV GEMM (M=40</text>
-<circle cx="1138.0" cy="579.8" r="5.2" fill="#059669" opacity="0.9" stroke="#ffffff" stroke-width="1.2"/>
-<text x="1127.8" y="594.8" text-anchor="end" font-size="8.8" font-weight="500" fill="#1e293b">Prefill FlashAttn (N=4</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 900" width="1240" height="900" style="font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif; background: #f8fafc;">
+<rect x="0" y="0" width="1240" height="900" fill="#f8fafc"/>
+<text x="620.0" y="30" text-anchor="middle" font-size="19" font-weight="700" fill="#0f172a">Multi-Dimensional GPU Inference Roofline Atlas — AMD Instinct MI355X (gfx950)</text>
+<text x="620.0" y="50" text-anchor="middle" font-size="12.5" fill="#475569">Mixed-Precision MoE Reference (Attn=FP8, MoE=FP4, KV=FP8, TP=2, BS=4 @ 32k ctx)</text>
+<circle cx="280" cy="70" r="5.5" fill="#2563eb"/>
+<text x="290" y="74" font-size="12" font-weight="600" fill="#1e293b">GEMM</text>
+<circle cx="425" cy="70" r="5.5" fill="#7c3aed"/>
+<text x="435" y="74" font-size="12" font-weight="600" fill="#1e293b">MoE</text>
+<circle cx="570" cy="70" r="5.5" fill="#059669"/>
+<text x="580" y="74" font-size="12" font-weight="600" fill="#1e293b">Attention</text>
+<circle cx="715" cy="70" r="5.5" fill="#d97706"/>
+<text x="725" y="74" font-size="12" font-weight="600" fill="#1e293b">Norm/Elem</text>
+<circle cx="860" cy="70" r="5.5" fill="#dc2626"/>
+<text x="870" y="74" font-size="12" font-weight="600" fill="#1e293b">Comm</text>
+<rect x="22" y="88" width="586" height="380" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="38" y="112" font-size="13.5" font-weight="700" fill="#0f172a">1. Multi-Precision Compute vs. Memory Roofline</text>
+<line x1="86" y1="130" x2="86" y2="428" stroke="#334155" stroke-width="1.3"/>
+<line x1="86" y1="428" x2="586" y2="428" stroke="#334155" stroke-width="1.3"/>
+<text x="336.0" y="456" text-anchor="middle" font-size="11.5" font-weight="600" fill="#334155">Operational Intensity (FLOPs / Byte, log10)</text>
+<text x="38" y="279.0" text-anchor="middle" font-size="11.5" font-weight="600" fill="#334155" transform="rotate(-90 38 279.0)">Performance (TFLOP/s, log10)</text>
+<line x1="127.6" y1="130" x2="127.6" y2="428" stroke="#f1f5f9"/>
+<text x="127.6" y="443" text-anchor="middle" font-size="10" fill="#64748b">0.5</text>
+<line x1="159.1" y1="130" x2="159.1" y2="428" stroke="#f1f5f9"/>
+<text x="159.1" y="443" text-anchor="middle" font-size="10" fill="#64748b">1</text>
+<line x1="263.8" y1="130" x2="263.8" y2="428" stroke="#f1f5f9"/>
+<text x="263.8" y="443" text-anchor="middle" font-size="10" fill="#64748b">10</text>
+<line x1="368.4" y1="130" x2="368.4" y2="428" stroke="#f1f5f9"/>
+<text x="368.4" y="443" text-anchor="middle" font-size="10" fill="#64748b">100</text>
+<line x1="473.1" y1="130" x2="473.1" y2="428" stroke="#f1f5f9"/>
+<text x="473.1" y="443" text-anchor="middle" font-size="10" fill="#64748b">1000</text>
+<line x1="577.7" y1="130" x2="577.7" y2="428" stroke="#f1f5f9"/>
+<text x="577.7" y="443" text-anchor="middle" font-size="10" fill="#64748b">10000</text>
+<line x1="86" y1="384.6" x2="586" y2="384.6" stroke="#f1f5f9"/>
+<text x="80" y="387.6" text-anchor="end" font-size="10" fill="#64748b">1</text>
+<line x1="86" y1="322.4" x2="586" y2="322.4" stroke="#f1f5f9"/>
+<text x="80" y="325.4" text-anchor="end" font-size="10" fill="#64748b">10</text>
+<line x1="86" y1="260.3" x2="586" y2="260.3" stroke="#f1f5f9"/>
+<text x="80" y="263.3" text-anchor="end" font-size="10" fill="#64748b">100</text>
+<line x1="86" y1="198.2" x2="586" y2="198.2" stroke="#f1f5f9"/>
+<text x="80" y="201.2" text-anchor="end" font-size="10" fill="#64748b">1000</text>
+<line x1="86" y1="136.0" x2="586" y2="136.0" stroke="#f1f5f9"/>
+<text x="80" y="139.0" text-anchor="end" font-size="10" fill="#64748b">10000</text>
+<path d="M86.0,428.0 L93.5,428.0 L101.0,428.0 L108.6,428.0 L116.1,428.0 L123.6,428.0 L131.1,424.6 L138.7,420.1 L146.2,415.7 L153.7,411.2 L161.2,406.7 L168.7,402.3 L176.3,397.8 L183.8,393.3 L191.3,388.9 L198.8,384.4 L206.4,379.9 L213.9,375.5 L221.4,371.0 L228.9,366.5 L236.4,362.1 L244.0,357.6 L251.5,353.1 L259.0,348.7 L266.5,344.2 L274.0,339.7 L281.6,335.3 L289.1,330.8 L296.6,326.3 L304.1,321.9 L311.7,317.4 L319.2,312.9 L326.7,308.5 L334.2,304.0 L341.7,299.5 L349.3,295.1 L356.8,290.6 L364.3,286.1 L371.8,281.7 L379.4,277.2 L386.9,272.7 L394.4,268.3 L401.9,263.8 L409.4,259.4 L417.0,254.9 L424.5,250.4 L432.0,250.3 L439.5,250.3 L447.1,250.3 L454.6,250.3 L462.1,250.3 L469.6,250.3 L477.1,250.3 L484.7,250.3 L492.2,250.3 L499.7,250.3 L507.2,250.3 L514.8,250.3 L522.3,250.3 L529.8,250.3 L537.3,250.3 L544.8,250.3 L552.4,250.3 L559.9,250.3 L567.4,250.3 L574.9,250.3 L582.4,250.3 L586.0,250.3" fill="none" stroke="#fca5a5" stroke-width="1.4" stroke-dasharray="2,3"/>
+<text x="209.1" y="389.3" text-anchor="start" font-size="8.7" font-weight="600" fill="#fca5a5">Uncoalesced (0.42 TB/s)</text>
+<path d="M86.0,349.3 L93.5,344.8 L101.0,340.3 L108.6,335.9 L116.1,331.4 L123.6,326.9 L131.1,322.5 L138.7,318.0 L146.2,313.5 L153.7,309.1 L161.2,304.6 L168.7,300.1 L176.3,295.7 L183.8,291.2 L191.3,286.7 L198.8,282.3 L206.4,277.8 L213.9,273.3 L221.4,268.9 L228.9,264.4 L236.4,259.9 L244.0,255.5 L251.5,251.0 L259.0,246.5 L266.5,242.1 L274.0,237.6 L281.6,233.1 L289.1,228.7 L296.6,224.2 L304.1,219.7 L311.7,215.3 L319.2,210.8 L326.7,206.3 L334.2,201.9 L341.7,197.4 L349.3,192.9 L356.8,188.5 L364.3,184.0 L371.8,179.5 L379.4,175.1 L386.9,170.6 L394.4,166.1 L401.9,161.7 L409.4,157.2 L417.0,152.7 L424.5,148.3 L432.0,146.4 L439.5,146.4 L447.1,146.4 L454.6,146.4 L462.1,146.4 L469.6,146.4 L477.1,146.4 L484.7,146.4 L492.2,146.4 L499.7,146.4 L507.2,146.4 L514.8,146.4 L522.3,146.4 L529.8,146.4 L537.3,146.4 L544.8,146.4 L552.4,146.4 L559.9,146.4 L567.4,146.4 L574.9,146.4 L582.4,146.4 L586.0,146.4" fill="none" stroke="#10b981" stroke-width="2.0" stroke-dasharray="5,3"/>
+<text x="171.1" y="292.8" text-anchor="start" font-size="8.7" font-weight="600" fill="#10b981">L2 (18.5 TB/s)</text>
+<path d="M86.0,371.9 L93.5,367.4 L101.0,363.0 L108.6,358.5 L116.1,354.0 L123.6,349.6 L131.1,345.1 L138.7,340.6 L146.2,336.2 L153.7,331.7 L161.2,327.2 L168.7,322.8 L176.3,318.3 L183.8,313.8 L191.3,309.4 L198.8,304.9 L206.4,300.4 L213.9,296.0 L221.4,291.5 L228.9,287.0 L236.4,282.6 L244.0,278.1 L251.5,273.6 L259.0,269.2 L266.5,264.7 L274.0,260.2 L281.6,255.8 L289.1,251.3 L296.6,246.8 L304.1,242.4 L311.7,237.9 L319.2,233.4 L326.7,229.0 L334.2,224.5 L341.7,220.0 L349.3,215.6 L356.8,211.1 L364.3,206.6 L371.8,202.2 L379.4,197.7 L386.9,193.2 L394.4,188.8 L401.9,184.3 L409.4,179.8 L417.0,175.4 L424.5,170.9 L432.0,166.4 L439.5,162.0 L447.1,157.5 L454.6,153.0 L462.1,148.6 L469.6,144.1 L477.1,139.6 L484.7,136.0 L492.2,136.0 L499.7,136.0 L507.2,136.0 L514.8,136.0 L522.3,136.0 L529.8,136.0 L537.3,136.0 L544.8,136.0 L552.4,136.0 L559.9,136.0 L567.4,136.0 L574.9,136.0 L582.4,136.0 L586.0,136.0" fill="none" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4,4"/>
+<text x="582.0" y="131.0" text-anchor="end" font-size="8.7" font-weight="600" fill="#94a3b8">FP4 Spec (10000 TF)</text>
+<path d="M86.0,378.1 L93.5,373.7 L101.0,369.2 L108.6,364.7 L116.1,360.3 L123.6,355.8 L131.1,351.3 L138.7,346.9 L146.2,342.4 L153.7,337.9 L161.2,333.5 L168.7,329.0 L176.3,324.5 L183.8,320.1 L191.3,315.6 L198.8,311.1 L206.4,306.7 L213.9,302.2 L221.4,297.7 L228.9,293.3 L236.4,288.8 L244.0,284.3 L251.5,279.9 L259.0,275.4 L266.5,270.9 L274.0,266.5 L281.6,262.0 L289.1,257.5 L296.6,253.1 L304.1,248.6 L311.7,244.1 L319.2,239.7 L326.7,235.2 L334.2,230.7 L341.7,226.3 L349.3,221.8 L356.8,217.3 L364.3,212.9 L371.8,208.4 L379.4,203.9 L386.9,199.5 L394.4,195.0 L401.9,190.5 L409.4,186.1 L417.0,181.6 L424.5,177.1 L432.0,172.7 L439.5,168.2 L447.1,163.7 L454.6,159.3 L462.1,154.8 L469.6,150.3 L477.1,146.4 L484.7,146.4 L492.2,146.4 L499.7,146.4 L507.2,146.4 L514.8,146.4 L522.3,146.4 L529.8,146.4 L537.3,146.4 L544.8,146.4 L552.4,146.4 L559.9,146.4 L567.4,146.4 L574.9,146.4 L582.4,146.4 L586.0,146.4" fill="none" stroke="#7c3aed" stroke-width="2.2"/>
+<text x="582.0" y="142.4" text-anchor="end" font-size="8.7" font-weight="600" fill="#7c3aed">FP4 (6800 TF)</text>
+<path d="M86.0,378.1 L93.5,373.7 L101.0,369.2 L108.6,364.7 L116.1,360.3 L123.6,355.8 L131.1,351.3 L138.7,346.9 L146.2,342.4 L153.7,337.9 L161.2,333.5 L168.7,329.0 L176.3,324.5 L183.8,320.1 L191.3,315.6 L198.8,311.1 L206.4,306.7 L213.9,302.2 L221.4,297.7 L228.9,293.3 L236.4,288.8 L244.0,284.3 L251.5,279.9 L259.0,275.4 L266.5,270.9 L274.0,266.5 L281.6,262.0 L289.1,257.5 L296.6,253.1 L304.1,248.6 L311.7,244.1 L319.2,239.7 L326.7,235.2 L334.2,230.7 L341.7,226.3 L349.3,221.8 L356.8,217.3 L364.3,212.9 L371.8,208.4 L379.4,203.9 L386.9,199.5 L394.4,195.0 L401.9,190.5 L409.4,186.1 L417.0,181.6 L424.5,177.1 L432.0,172.7 L439.5,168.2 L447.1,165.1 L454.6,165.1 L462.1,165.1 L469.6,165.1 L477.1,165.1 L484.7,165.1 L492.2,165.1 L499.7,165.1 L507.2,165.1 L514.8,165.1 L522.3,165.1 L529.8,165.1 L537.3,165.1 L544.8,165.1 L552.4,165.1 L559.9,165.1 L567.4,165.1 L574.9,165.1 L582.4,165.1 L586.0,165.1" fill="none" stroke="#2563eb" stroke-width="2.2"/>
+<text x="582.0" y="161.1" text-anchor="end" font-size="8.7" font-weight="600" fill="#2563eb">FP8 (3400 TF)</text>
+<path d="M86.0,378.1 L93.5,373.7 L101.0,369.2 L108.6,364.7 L116.1,360.3 L123.6,355.8 L131.1,351.3 L138.7,346.9 L146.2,342.4 L153.7,337.9 L161.2,333.5 L168.7,329.0 L176.3,324.5 L183.8,320.1 L191.3,315.6 L198.8,311.1 L206.4,306.7 L213.9,302.2 L221.4,297.7 L228.9,293.3 L236.4,288.8 L244.0,284.3 L251.5,279.9 L259.0,275.4 L266.5,270.9 L274.0,266.5 L281.6,262.0 L289.1,257.5 L296.6,253.1 L304.1,248.6 L311.7,244.1 L319.2,239.7 L326.7,235.2 L334.2,230.7 L341.7,226.3 L349.3,221.8 L356.8,217.3 L364.3,212.9 L371.8,208.4 L379.4,203.9 L386.9,199.5 L394.4,195.0 L401.9,190.5 L409.4,186.1 L417.0,184.2 L424.5,184.2 L432.0,184.2 L439.5,184.2 L447.1,184.2 L454.6,184.2 L462.1,184.2 L469.6,184.2 L477.1,184.2 L484.7,184.2 L492.2,184.2 L499.7,184.2 L507.2,184.2 L514.8,184.2 L522.3,184.2 L529.8,184.2 L537.3,184.2 L544.8,184.2 L552.4,184.2 L559.9,184.2 L567.4,184.2 L574.9,184.2 L582.4,184.2 L586.0,184.2" fill="none" stroke="#0f172a" stroke-width="2.2"/>
+<text x="582.0" y="195.2" text-anchor="end" font-size="8.7" font-weight="600" fill="#0f172a">BF16 (6.35 TB/s, 1680 TF)</text>
+<path d="M86.0,380.3 L93.5,375.9 L101.0,371.4 L108.6,366.9 L116.1,362.5 L123.6,358.0 L131.1,353.5 L138.7,349.1 L146.2,344.6 L153.7,340.1 L161.2,335.7 L168.7,331.2 L176.3,326.7 L183.8,322.3 L191.3,317.8 L198.8,313.3 L206.4,308.9 L213.9,304.4 L221.4,299.9 L228.9,295.5 L236.4,291.0 L244.0,286.5 L251.5,282.1 L259.0,277.6 L266.5,273.1 L274.0,268.7 L281.6,264.2 L289.1,259.7 L296.6,255.3 L304.1,250.8 L311.7,250.3 L319.2,250.3 L326.7,250.3 L334.2,250.3 L341.7,250.3 L349.3,250.3 L356.8,250.3 L364.3,250.3 L371.8,250.3 L379.4,250.3 L386.9,250.3 L394.4,250.3 L401.9,250.3 L409.4,250.3 L417.0,250.3 L424.5,250.3 L432.0,250.3 L439.5,250.3 L447.1,250.3 L454.6,250.3 L462.1,250.3 L469.6,250.3 L477.1,250.3 L484.7,250.3 L492.2,250.3 L499.7,250.3 L507.2,250.3 L514.8,250.3 L522.3,250.3 L529.8,250.3 L537.3,250.3 L544.8,250.3 L552.4,250.3 L559.9,250.3 L567.4,250.3 L574.9,250.3 L582.4,250.3 L586.0,250.3" fill="none" stroke="#d97706" stroke-width="1.6" stroke-dasharray="3,3"/>
+<text x="582.0" y="246.3" text-anchor="end" font-size="8.7" font-weight="600" fill="#d97706">FP32 VALU (145 TF)</text>
+<path d="M86.0,380.3 L93.5,375.9 L101.0,371.4 L108.6,366.9 L116.1,362.5 L123.6,358.0 L131.1,353.5 L138.7,349.1 L146.2,344.6 L153.7,340.1 L161.2,335.7 L168.7,331.2 L176.3,326.7 L183.8,322.3 L191.3,317.8 L198.8,313.3 L206.4,308.9 L213.9,304.4 L221.4,299.9 L228.9,295.5 L236.4,291.0 L244.0,286.5 L251.5,283.7 L259.0,283.7 L266.5,283.7 L274.0,283.7 L281.6,283.7 L289.1,283.7 L296.6,283.7 L304.1,283.7 L311.7,283.7 L319.2,283.7 L326.7,283.7 L334.2,283.7 L341.7,283.7 L349.3,283.7 L356.8,283.7 L364.3,283.7 L371.8,283.7 L379.4,283.7 L386.9,283.7 L394.4,283.7 L401.9,283.7 L409.4,283.7 L417.0,283.7 L424.5,283.7 L432.0,283.7 L439.5,283.7 L447.1,283.7 L454.6,283.7 L462.1,283.7 L469.6,283.7 L477.1,283.7 L484.7,283.7 L492.2,283.7 L499.7,283.7 L507.2,283.7 L514.8,283.7 L522.3,283.7 L529.8,283.7 L537.3,283.7 L544.8,283.7 L552.4,283.7 L559.9,283.7 L567.4,283.7 L574.9,283.7 L582.4,283.7 L586.0,283.7" fill="none" stroke="#b45309" stroke-width="1.4" stroke-dasharray="2,2"/>
+<text x="582.0" y="294.7" text-anchor="end" font-size="8.7" font-weight="600" fill="#b45309">SFU (42 TOP/s)</text>
+<line x1="476.2" y1="146.4" x2="476.2" y2="428" stroke="#ef4444" stroke-dasharray="2,3"/>
+<text x="472.2" y="420" text-anchor="end" font-size="9.2" fill="#dc2626">FP4 Ridge=1071</text>
+<line x1="253.6" y1="283.3" x2="253.6" y2="278.6" stroke="#cbd5e1" stroke-dasharray="2,2"/>
+<circle cx="253.6" cy="283.3" r="5.3" fill="#2563eb" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="263.9" y="286.3" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Decode QKV+O (FP8,M=4)</text>
+<line x1="217.0" y1="320.2" x2="217.0" y2="300.3" stroke="#cbd5e1" stroke-dasharray="2,2"/>
+<circle cx="217.0" cy="320.2" r="6.8" fill="#7c3aed" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="228.8" y="323.2" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Decode MoE (FP4,m/e=1.</text>
+<line x1="253.4" y1="285.4" x2="253.4" y2="278.7" stroke="#cbd5e1" stroke-dasharray="2,2"/>
+<circle cx="253.4" cy="285.4" r="4.9" fill="#2563eb" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="263.3" y="300.4" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Decode Shared FFN (FP8</text>
+<line x1="326.4" y1="240.1" x2="326.4" y2="235.4" stroke="#cbd5e1" stroke-dasharray="2,2"/>
+<circle cx="326.4" cy="240.1" r="5.3" fill="#2563eb" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="336.7" y="243.1" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">SpecDec Verify (FP8,M=</text>
+<line x1="217.0" y1="320.1" x2="217.0" y2="300.3" stroke="#cbd5e1" stroke-dasharray="2,2"/>
+<circle cx="217.0" cy="320.1" r="9.6" fill="#7c3aed" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="231.6" y="263.1" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">SpecVerify MoE (FP4,m/</text>
+<line x1="411.1" y1="200.7" x2="411.1" y2="185.0" stroke="#cbd5e1" stroke-dasharray="2,2"/>
+<circle cx="411.1" cy="200.7" r="4.8" fill="#059669" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="421.0" y="203.7" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Decode MLA Attn ( [FP8]</text>
+<line x1="348.1" y1="255.7" x2="348.1" y2="222.5" stroke="#cbd5e1" stroke-dasharray="2,2"/>
+<circle cx="348.1" cy="255.7" r="5.1" fill="#059669" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="358.3" y="258.7" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Decode Sparse Ind [FP8]</text>
+<line x1="522.2" y1="169.2" x2="522.2" y2="165.1" stroke="#cbd5e1" stroke-dasharray="2,2"/>
+<circle cx="522.2" cy="169.2" r="7.7" fill="#2563eb" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="509.5" y="172.2" text-anchor="end" font-size="8.5" font-weight="500" fill="#1e293b">Prefill QKV (FP8,M=409</text>
+<line x1="418.0" y1="185.1" x2="418.0" y2="181.0" stroke="#cbd5e1" stroke-dasharray="2,2"/>
+<circle cx="418.0" cy="185.1" r="10.0" fill="#7c3aed" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="433.0" y="188.1" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Prefill MoE (FP4,m/e=8</text>
+<line x1="560.9" y1="169.3" x2="560.9" y2="165.1" stroke="#cbd5e1" stroke-dasharray="2,2"/>
+<circle cx="560.9" cy="169.3" r="6.9" fill="#059669" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="549.0" y="208.3" text-anchor="end" font-size="8.5" font-weight="500" fill="#1e293b">Prefill FlashAttn [FP8]</text>
+<line x1="150.9" y1="425.9" x2="150.9" y2="310.8" stroke="#cbd5e1" stroke-dasharray="2,2"/>
+<circle cx="150.9" cy="425.9" r="4.7" fill="#d97706" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="160.6" y="421.9" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Decode RMSNorm+Ro [SFU]</text>
+<rect x="632" y="88" width="586" height="380" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="648" y="112" font-size="13.5" font-weight="700" fill="#0f172a">2. All Data-Movement Pipes vs. Payload Size (L2 / HBM / P2P / PCIe)</text>
+<line x1="696" y1="130" x2="696" y2="428" stroke="#334155" stroke-width="1.3"/>
+<line x1="696" y1="428" x2="1196" y2="428" stroke="#334155" stroke-width="1.3"/>
+<text x="946.0" y="456" text-anchor="middle" font-size="11.5" font-weight="600" fill="#334155">Payload Bytes Moved per Kernel or Collective (log2)</text>
+<text x="648" y="279.0" text-anchor="middle" font-size="11.5" font-weight="600" fill="#334155" transform="rotate(-90 648 279.0)">Achieved Bandwidth (GB/s, log10)</text>
+<line x1="696.0" y1="130" x2="696.0" y2="428" stroke="#f1f5f9"/>
+<text x="696.0" y="443" text-anchor="middle" font-size="10" fill="#64748b">4K</text>
+<line x1="801.3" y1="130" x2="801.3" y2="428" stroke="#f1f5f9"/>
+<text x="801.3" y="443" text-anchor="middle" font-size="10" fill="#64748b">64K</text>
+<line x1="906.5" y1="130" x2="906.5" y2="428" stroke="#f1f5f9"/>
+<text x="906.5" y="443" text-anchor="middle" font-size="10" fill="#64748b">1M</text>
+<line x1="1011.8" y1="130" x2="1011.8" y2="428" stroke="#f1f5f9"/>
+<text x="1011.8" y="443" text-anchor="middle" font-size="10" fill="#64748b">16M</text>
+<line x1="1117.1" y1="130" x2="1117.1" y2="428" stroke="#f1f5f9"/>
+<text x="1117.1" y="443" text-anchor="middle" font-size="10" fill="#64748b">256M</text>
+<line x1="1196.0" y1="130" x2="1196.0" y2="428" stroke="#f1f5f9"/>
+<text x="1196.0" y="443" text-anchor="middle" font-size="10" fill="#64748b">2G</text>
+<line x1="696" y1="361.4" x2="1196" y2="361.4" stroke="#f1f5f9"/>
+<text x="690" y="364.4" text-anchor="end" font-size="9.5" fill="#64748b">10 GB/s</text>
+<line x1="696" y1="294.9" x2="1196" y2="294.9" stroke="#f1f5f9"/>
+<text x="690" y="297.9" text-anchor="end" font-size="9.5" fill="#64748b">100 GB/s</text>
+<line x1="696" y1="228.3" x2="1196" y2="228.3" stroke="#f1f5f9"/>
+<text x="690" y="231.3" text-anchor="end" font-size="9.5" fill="#64748b">1 TB/s</text>
+<line x1="696" y1="161.8" x2="1196" y2="161.8" stroke="#f1f5f9"/>
+<text x="690" y="164.8" text-anchor="end" font-size="9.5" fill="#64748b">10 TB/s</text>
+<path d="M696.0,362.2 L709.2,352.2 L722.3,342.2 L735.5,332.2 L748.6,322.2 L761.8,312.2 L774.9,302.2 L788.1,292.2 L801.3,282.3 L814.4,272.3 L827.6,262.5 L840.7,252.6 L853.9,242.9 L867.1,233.3 L880.2,223.8 L893.4,214.5 L906.5,205.5 L919.7,196.9 L932.8,188.7 L946.0,181.2 L959.2,174.3 L972.3,168.2 L985.5,162.9 L998.6,158.5 L1011.8,155.0 L1024.9,152.2 L1038.1,150.0 L1051.3,148.4 L1064.4,147.3 L1077.6,146.8 L1090.7,147.6 L1103.9,151.8 L1117.1,160.8 L1130.2,169.4 L1143.4,173.3 L1156.5,174.5 L1169.7,174.8 L1182.8,174.9 L1196.0,174.9" fill="none" stroke="#0f172a" stroke-width="2.2"/>
+<text x="1027.2" y="139.5" font-size="9.2" font-weight="600" fill="#0f172a">On-Chip L2 -> HBM Read Cliff</text>
+<path d="M696.0,428.0 L709.2,428.0 L722.3,419.1 L735.5,409.1 L748.6,399.2 L761.8,389.3 L774.9,379.4 L788.1,369.5 L801.3,359.8 L814.4,350.1 L827.6,340.6 L840.7,331.2 L853.9,322.1 L867.1,313.4 L880.2,305.1 L893.4,297.3 L906.5,290.2 L919.7,283.8 L932.8,278.3 L946.0,273.7 L959.2,269.9 L972.3,266.8 L985.5,264.5 L998.6,262.7 L1011.8,261.4 L1024.9,260.4 L1038.1,259.7 L1051.3,259.1 L1064.4,258.8 L1077.6,258.5 L1090.7,258.3 L1103.9,258.2 L1117.1,258.1 L1130.2,258.0 L1143.4,258.0 L1156.5,257.9 L1169.7,257.9 L1182.8,257.9 L1196.0,257.9" fill="none" stroke="#dc2626" stroke-width="2"/>
+<text x="1099.2" y="251.9" font-size="9.2" font-weight="600" fill="#dc2626">All-GPU P2P Bus (360 GB/s)</text>
+<path d="M696.0,428.0 L709.2,428.0 L722.3,428.0 L735.5,424.4 L748.6,414.6 L761.8,404.9 L774.9,395.4 L788.1,386.1 L801.3,377.0 L814.4,368.2 L827.6,359.9 L840.7,352.1 L853.9,345.0 L867.1,338.7 L880.2,333.2 L893.4,328.5 L906.5,324.7 L919.7,321.7 L932.8,319.3 L946.0,317.5 L959.2,316.2 L972.3,315.2 L985.5,314.5 L998.6,314.0 L1011.8,313.6 L1024.9,313.3 L1038.1,313.2 L1051.3,313.0 L1064.4,312.9 L1077.6,312.9 L1090.7,312.8 L1103.9,312.8 L1117.1,312.7 L1130.2,312.7 L1143.4,312.7 L1156.5,312.7 L1169.7,312.7 L1182.8,312.7 L1196.0,312.7" fill="none" stroke="#64748b" stroke-width="1.8" stroke-dasharray="4,3"/>
+<text x="1099.2" y="325.7" font-size="9.2" font-weight="600" fill="#475569">Host PCIe (54 GB/s)</text>
+<circle cx="1076.8" cy="179.9" r="5.0" fill="#2563eb" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="1066.8" y="182.9" text-anchor="end" font-size="8.5" font-weight="500" fill="#1e293b">Decode QKV+O (FP8,M=4)</text>
+<circle cx="1131.7" cy="196.1" r="5.0" fill="#7c3aed" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="1121.7" y="199.1" text-anchor="end" font-size="8.5" font-weight="500" fill="#1e293b">Decode MoE (FP4,m/e=1.</text>
+<circle cx="1022.3" cy="182.1" r="5.0" fill="#2563eb" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="1032.3" y="221.1" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Decode Shared FFN (FP8</text>
+<circle cx="1077.0" cy="179.9" r="5.0" fill="#2563eb" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="1067.0" y="242.9" text-anchor="end" font-size="8.5" font-weight="500" fill="#1e293b">SpecDec Verify (FP8,M=</text>
+<circle cx="1192.8" cy="196.0" r="5.0" fill="#7c3aed" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="1182.8" y="211.0" text-anchor="end" font-size="8.5" font-weight="500" fill="#1e293b">SpecVerify MoE (FP4,m/</text>
+<circle cx="989.9" cy="191.7" r="5.0" fill="#059669" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="999.9" y="254.7" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Decode MLA Attn (4k)</text>
+<circle cx="1011.8" cy="210.5" r="5.0" fill="#059669" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="1021.8" y="273.5" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Decode Sparse Indexer </text>
+<circle cx="1115.5" cy="228.6" r="5.0" fill="#2563eb" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="1105.5" y="291.6" text-anchor="end" font-size="8.5" font-weight="500" fill="#1e293b">Prefill QKV (FP8,M=409</text>
+<circle cx="1196.0" cy="179.3" r="5.0" fill="#7c3aed" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="1186.0" y="230.3" text-anchor="end" font-size="8.5" font-weight="500" fill="#1e293b">Prefill MoE (FP4,m/e=8</text>
+<circle cx="1059.9" cy="253.3" r="5.0" fill="#059669" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="1049.9" y="304.3" text-anchor="end" font-size="8.5" font-weight="500" fill="#1e293b">Prefill FlashAttn (N=4</text>
+<circle cx="837.9" cy="267.3" r="5.0" fill="#d97706" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="847.9" y="270.3" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Decode RMSNorm+RoPE (M</text>
+<circle cx="796.2" cy="363.4" r="5.0" fill="#dc2626" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="806.2" y="366.4" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Decode TP2 AllReduce</text>
+<circle cx="1059.4" cy="258.9" r="5.0" fill="#dc2626" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="1049.4" y="321.9" text-anchor="end" font-size="8.5" font-weight="500" fill="#1e293b">Prefill TP2 AllReduce</text>
+<rect x="22" y="494" width="586" height="380" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="38" y="518" font-size="13.5" font-weight="700" fill="#0f172a">3. Kernel Dispatch Efficiency vs. Kernel Duration (Eager vs. Graphs)</text>
+<line x1="86" y1="536" x2="86" y2="834" stroke="#334155" stroke-width="1.3"/>
+<line x1="86" y1="834" x2="586" y2="834" stroke="#334155" stroke-width="1.3"/>
+<text x="336.0" y="862" text-anchor="middle" font-size="11.5" font-weight="600" fill="#334155">Mean GPU Kernel Duration (microseconds, log10)</text>
+<text x="38" y="685.0" text-anchor="middle" font-size="11.5" font-weight="600" fill="#334155" transform="rotate(-90 38 685.0)">Effective GPU Busy % (t_kern / (t_kern + t_gap))</text>
+<line x1="127.8" y1="536" x2="127.8" y2="834" stroke="#f1f5f9"/>
+<text x="127.8" y="849" text-anchor="middle" font-size="10" fill="#64748b">1 us</text>
+<line x1="224.8" y1="536" x2="224.8" y2="834" stroke="#f1f5f9"/>
+<text x="224.8" y="849" text-anchor="middle" font-size="10" fill="#64748b">5 us</text>
+<line x1="266.6" y1="536" x2="266.6" y2="834" stroke="#f1f5f9"/>
+<text x="266.6" y="849" text-anchor="middle" font-size="10" fill="#64748b">10 us</text>
+<line x1="363.6" y1="536" x2="363.6" y2="834" stroke="#f1f5f9"/>
+<text x="363.6" y="849" text-anchor="middle" font-size="10" fill="#64748b">50 us</text>
+<line x1="405.4" y1="536" x2="405.4" y2="834" stroke="#f1f5f9"/>
+<text x="405.4" y="849" text-anchor="middle" font-size="10" fill="#64748b">100 us</text>
+<line x1="502.4" y1="536" x2="502.4" y2="834" stroke="#f1f5f9"/>
+<text x="502.4" y="849" text-anchor="middle" font-size="10" fill="#64748b">500 us</text>
+<line x1="544.2" y1="536" x2="544.2" y2="834" stroke="#f1f5f9"/>
+<text x="544.2" y="849" text-anchor="middle" font-size="10" fill="#64748b">1000 us</text>
+<line x1="86" y1="834.0" x2="586" y2="834.0" stroke="#f1f5f9"/>
+<text x="80" y="837.0" text-anchor="end" font-size="10" fill="#64748b">0%</text>
+<line x1="86" y1="759.5" x2="586" y2="759.5" stroke="#f1f5f9"/>
+<text x="80" y="762.5" text-anchor="end" font-size="10" fill="#64748b">25%</text>
+<line x1="86" y1="685.0" x2="586" y2="685.0" stroke="#f1f5f9"/>
+<text x="80" y="688.0" text-anchor="end" font-size="10" fill="#64748b">50%</text>
+<line x1="86" y1="610.5" x2="586" y2="610.5" stroke="#f1f5f9"/>
+<text x="80" y="613.5" text-anchor="end" font-size="10" fill="#64748b">75%</text>
+<line x1="86" y1="536.0" x2="586" y2="536.0" stroke="#f1f5f9"/>
+<text x="80" y="539.0" text-anchor="end" font-size="10" fill="#64748b">100%</text>
+<path d="M86.0,785.9 L97.0,778.1 L108.0,769.4 L119.0,759.7 L130.0,749.0 L141.0,737.6 L151.9,725.3 L162.9,712.4 L173.9,699.1 L184.9,685.6 L195.9,672.0 L206.9,658.7 L217.9,645.8 L228.9,633.5 L239.9,621.9 L250.9,611.2 L261.9,601.4 L272.8,592.6 L283.8,584.7 L294.8,577.7 L305.8,571.6 L316.8,566.3 L327.8,561.7 L338.8,557.7 L349.8,554.3 L360.8,551.4 L371.8,548.9 L382.8,546.9 L393.8,545.1 L404.7,543.6 L415.7,542.4 L426.7,541.3 L437.7,540.5 L448.7,539.7 L459.7,539.1 L470.7,538.6 L481.7,538.2 L492.7,537.8 L503.7,537.5 L514.7,537.3 L525.6,537.1 L536.6,536.9 L547.6,536.7 L558.6,536.6 L569.6,536.5 L580.6,536.4" fill="none" stroke="#dc2626" stroke-width="2" stroke-dasharray="5,3"/>
+<path d="M86.0,672.0 L97.0,658.7 L108.0,645.8 L119.0,633.5 L130.0,621.9 L141.0,611.2 L151.9,601.4 L162.9,592.6 L173.9,584.7 L184.9,577.7 L195.9,571.6 L206.9,566.3 L217.9,561.7 L228.9,557.7 L239.9,554.3 L250.9,551.4 L261.9,549.0 L272.8,546.9 L283.8,545.1 L294.8,543.6 L305.8,542.4 L316.8,541.3 L327.8,540.5 L338.8,539.7 L349.8,539.1 L360.8,538.6 L371.8,538.2 L382.8,537.8 L393.8,537.5 L404.7,537.3 L415.7,537.1 L426.7,536.9 L437.7,536.7 L448.7,536.6 L459.7,536.5 L470.7,536.4 L481.7,536.4 L492.7,536.3 L503.7,536.2 L514.7,536.2 L525.6,536.2 L536.6,536.1 L547.6,536.1 L558.6,536.1 L569.6,536.1 L580.6,536.1" fill="none" stroke="#059669" stroke-width="2.2"/>
+<text x="175.3" y="559.8" font-size="9.2" font-weight="600" fill="#059669">CUDA/HIP Graph (0.42 us gap)</text>
+<text x="277.6" y="631.4" font-size="9.2" font-weight="600" fill="#dc2626">Eager Launch (2.6 us gap)</text>
+<circle cx="300.1" cy="574.7" r="5.0" fill="#2563eb" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="310.1" y="577.7" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Decode QKV+O (FP8,M=4)</text>
+<circle cx="421.0" cy="541.9" r="5.0" fill="#7c3aed" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="431.0" y="547.0" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Decode MoE (FP4,m/e=1.</text>
+<circle cx="218.1" cy="645.5" r="5.0" fill="#2563eb" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="228.1" y="648.5" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Decode Shared FFN (FP8</text>
+<circle cx="300.5" cy="574.5" r="5.0" fill="#2563eb" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="310.5" y="589.5" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">SpecDec Verify (FP8,M=</text>
+<circle cx="517.9" cy="537.2" r="5.0" fill="#7c3aed" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="507.9" y="564.2" text-anchor="end" font-size="8.5" font-weight="500" fill="#1e293b">SpecVerify MoE (FP4,m/</text>
+<circle cx="186.7" cy="683.4" r="5.0" fill="#059669" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="196.7" y="686.4" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Decode MLA Attn (4k)</text>
+<circle cx="260.7" cy="602.4" r="5.0" fill="#059669" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="270.7" y="605.4" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Decode Sparse Indexer </text>
+<circle cx="463.1" cy="538.9" r="5.0" fill="#2563eb" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="453.1" y="577.9" text-anchor="end" font-size="8.5" font-weight="500" fill="#1e293b">Prefill QKV (FP8,M=409</text>
+<circle cx="537.1" cy="536.9" r="5.0" fill="#7c3aed" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="527.1" y="599.9" text-anchor="end" font-size="8.5" font-weight="500" fill="#1e293b">Prefill MoE (FP4,m/e=8</text>
+<circle cx="426.3" cy="541.4" r="5.0" fill="#059669" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="436.3" y="616.4" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Prefill FlashAttn (N=4</text>
+<circle cx="103.0" cy="773.5" r="5.0" fill="#d97706" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="113.0" y="776.5" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Decode RMSNorm+RoPE (M</text>
+<circle cx="237.2" cy="624.7" r="5.0" fill="#dc2626" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="247.2" y="627.7" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Decode TP2 AllReduce</text>
+<circle cx="437.1" cy="540.5" r="5.0" fill="#dc2626" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="427.1" y="639.5" text-anchor="end" font-size="8.5" font-weight="500" fill="#1e293b">Prefill TP2 AllReduce</text>
+<rect x="632" y="494" width="586" height="380" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="648" y="518" font-size="13.5" font-weight="700" fill="#0f172a">4. Precision-Matched Matrix Utilization vs. Tokens M (Batch Knee)</text>
+<line x1="696" y1="536" x2="696" y2="834" stroke="#334155" stroke-width="1.3"/>
+<line x1="696" y1="834" x2="1196" y2="834" stroke="#334155" stroke-width="1.3"/>
+<text x="946.0" y="862" text-anchor="middle" font-size="11.5" font-weight="600" fill="#334155">Tokens per GEMM or Routed MoE Expert M (log2)</text>
+<text x="648" y="685.0" text-anchor="middle" font-size="11.5" font-weight="600" fill="#334155" transform="rotate(-90 648 685.0)">% of Op's Native Sustained Roof (BF16 / FP8 / FP4)</text>
+<line x1="696.0" y1="536" x2="696.0" y2="834" stroke="#f1f5f9"/>
+<text x="696.0" y="849" text-anchor="middle" font-size="10" fill="#64748b">M=1</text>
+<line x1="772.9" y1="536" x2="772.9" y2="834" stroke="#f1f5f9"/>
+<text x="772.9" y="849" text-anchor="middle" font-size="10" fill="#64748b">M=4</text>
+<line x1="849.8" y1="536" x2="849.8" y2="834" stroke="#f1f5f9"/>
+<text x="849.8" y="849" text-anchor="middle" font-size="10" fill="#64748b">M=16</text>
+<line x1="926.8" y1="536" x2="926.8" y2="834" stroke="#f1f5f9"/>
+<text x="926.8" y="849" text-anchor="middle" font-size="10" fill="#64748b">M=64</text>
+<line x1="1003.7" y1="536" x2="1003.7" y2="834" stroke="#f1f5f9"/>
+<text x="1003.7" y="849" text-anchor="middle" font-size="10" fill="#64748b">M=256</text>
+<line x1="1080.6" y1="536" x2="1080.6" y2="834" stroke="#f1f5f9"/>
+<text x="1080.6" y="849" text-anchor="middle" font-size="10" fill="#64748b">M=1024</text>
+<line x1="1157.5" y1="536" x2="1157.5" y2="834" stroke="#f1f5f9"/>
+<text x="1157.5" y="849" text-anchor="middle" font-size="10" fill="#64748b">M=4096</text>
+<line x1="696" y1="834.0" x2="1196" y2="834.0" stroke="#f1f5f9"/>
+<text x="690" y="837.0" text-anchor="end" font-size="10" fill="#64748b">0%</text>
+<line x1="696" y1="763.0" x2="1196" y2="763.0" stroke="#f1f5f9"/>
+<text x="690" y="766.0" text-anchor="end" font-size="10" fill="#64748b">25%</text>
+<line x1="696" y1="692.1" x2="1196" y2="692.1" stroke="#f1f5f9"/>
+<text x="690" y="695.1" text-anchor="end" font-size="10" fill="#64748b">50%</text>
+<line x1="696" y1="621.1" x2="1196" y2="621.1" stroke="#f1f5f9"/>
+<text x="690" y="624.1" text-anchor="end" font-size="10" fill="#64748b">75%</text>
+<line x1="696" y1="550.2" x2="1196" y2="550.2" stroke="#f1f5f9"/>
+<text x="690" y="553.2" text-anchor="end" font-size="10" fill="#64748b">100%</text>
+<path d="M696.0,832.9 L705.6,832.7 L715.2,832.5 L724.8,832.2 L734.5,831.9 L744.1,831.4 L753.7,831.0 L763.3,830.4 L772.9,829.7 L782.5,828.9 L792.2,827.9 L801.8,826.8 L811.4,825.4 L821.0,823.8 L830.6,821.9 L840.2,819.6 L849.8,816.8 L859.5,813.6 L869.1,809.7 L878.7,805.1 L888.3,799.7 L897.9,793.2 L907.5,785.5 L917.2,776.3 L926.8,765.3 L936.4,752.4 L946.0,736.9 L955.6,718.5 L965.2,696.7 L974.8,670.7 L984.5,639.8 L994.1,603.1 L1003.7,589.9 L1013.3,589.9 L1022.9,589.9 L1032.5,589.9 L1042.2,589.9 L1051.8,589.9 L1061.4,589.9 L1071.0,589.9 L1080.6,589.9 L1090.2,589.9 L1099.8,589.9 L1109.5,589.9 L1119.1,589.9 L1128.7,589.9 L1138.3,589.9 L1147.9,589.9 L1157.5,589.9 L1167.2,589.9 L1176.8,589.9 L1186.4,589.9 L1196.0,589.9" fill="none" stroke="#0f172a" stroke-width="2"/>
+<text x="981.6" y="686.4" font-size="8.8" font-weight="600" fill="#0f172a">BF16 Weights</text>
+<path d="M696.0,832.9 L705.6,832.7 L715.2,832.5 L724.8,832.2 L734.5,831.9 L744.1,831.5 L753.7,831.0 L763.3,830.4 L772.9,829.8 L782.5,829.0 L792.2,828.0 L801.8,826.9 L811.4,825.5 L821.0,823.9 L830.6,822.0 L840.2,819.7 L849.8,817.0 L859.5,813.8 L869.1,810.0 L878.7,805.5 L888.3,800.1 L897.9,793.7 L907.5,786.0 L917.2,776.9 L926.8,766.2 L936.4,753.3 L946.0,738.0 L955.6,719.9 L965.2,698.3 L974.8,672.6 L984.5,642.1 L994.1,605.8 L1003.7,589.9 L1013.3,589.9 L1022.9,589.9 L1032.5,589.9 L1042.2,589.9 L1051.8,589.9 L1061.4,589.9 L1071.0,589.9 L1080.6,589.9 L1090.2,589.9 L1099.8,589.9 L1109.5,589.9 L1119.1,589.9 L1128.7,589.9 L1138.3,589.9 L1147.9,589.9 L1157.5,589.9 L1167.2,589.9 L1176.8,589.9 L1186.4,589.9 L1196.0,589.9" fill="none" stroke="#2563eb" stroke-width="2"/>
+<text x="982.3" y="641.0" font-size="8.8" font-weight="600" fill="#2563eb">FP8 Weights</text>
+<path d="M696.0,833.1 L705.6,832.9 L715.2,832.7 L724.8,832.4 L734.5,832.1 L744.1,831.7 L753.7,831.3 L763.3,830.8 L772.9,830.2 L782.5,829.5 L792.2,828.6 L801.8,827.6 L811.4,826.4 L821.0,825.0 L830.6,823.3 L840.2,821.3 L849.8,818.9 L859.5,816.0 L869.1,812.6 L878.7,808.5 L888.3,803.7 L897.9,798.0 L907.5,791.2 L917.2,783.1 L926.8,773.4 L936.4,762.0 L946.0,748.3 L955.6,732.1 L965.2,712.8 L974.8,689.9 L984.5,662.7 L994.1,630.2 L1003.7,591.7 L1013.3,589.9 L1022.9,589.9 L1032.5,589.9 L1042.2,589.9 L1051.8,589.9 L1061.4,589.9 L1071.0,589.9 L1080.6,589.9 L1090.2,589.9 L1099.8,589.9 L1109.5,589.9 L1119.1,589.9 L1128.7,589.9 L1138.3,589.9 L1147.9,589.9 L1157.5,589.9 L1167.2,589.9 L1176.8,589.9 L1186.4,589.9 L1196.0,589.9" fill="none" stroke="#7c3aed" stroke-width="2"/>
+<text x="988.6" y="598.4" font-size="8.8" font-weight="600" fill="#7c3aed">FP4 Weights</text>
+<circle cx="772.9" cy="830.4" r="5.2" fill="#2563eb" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="783.1" y="826.4" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Decode QKV+O (FP8,M=4)</text>
+<circle cx="696.0" cy="833.5" r="5.2" fill="#7c3aed" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="706.2" y="805.5" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Decode MoE (FP4,m/e=1.</text>
+<circle cx="772.9" cy="830.7" r="5.2" fill="#2563eb" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="783.1" y="790.7" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Decode Shared FFN (FP8</text>
+<circle cx="862.2" cy="816.4" r="5.2" fill="#2563eb" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="872.4" y="812.4" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">SpecDec Verify (FP8,M=</text>
+<circle cx="696.0" cy="833.5" r="5.2" fill="#7c3aed" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="706.2" y="769.5" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">SpecVerify MoE (FP4,m/</text>
+<circle cx="772.9" cy="758.1" r="5.2" fill="#059669" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="783.1" y="749.1" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Decode MLA Attn ( [FP8]</text>
+<circle cx="772.9" cy="824.1" r="5.2" fill="#059669" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="783.1" y="736.1" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Decode Sparse Ind [FP8]</text>
+<circle cx="1157.5" cy="590.3" r="5.2" fill="#2563eb" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="1147.3" y="593.3" text-anchor="end" font-size="8.5" font-weight="500" fill="#1e293b">Prefill QKV (FP8,M=409</text>
+<circle cx="942.7" cy="766.3" r="5.2" fill="#7c3aed" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="952.9" y="769.3" text-anchor="start" font-size="8.5" font-weight="500" fill="#1e293b">Prefill MoE (FP4,m/e=8</text>
+<circle cx="1157.5" cy="590.6" r="5.2" fill="#059669" opacity="0.92" stroke="#ffffff" stroke-width="1.2"/>
+<text x="1147.3" y="605.6" text-anchor="end" font-size="8.5" font-weight="500" fill="#1e293b">Prefill FlashAttn [FP8]</text>
 </svg>
